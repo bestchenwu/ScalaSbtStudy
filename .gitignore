@@ -11,5 +11,5 @@ ScalaProgramingAction.iml
 .idea/
 scalaStudy.iml
 /out
-**/target
-**/project
+/target
+/project
