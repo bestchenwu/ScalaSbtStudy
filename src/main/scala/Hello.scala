@@ -8,15 +8,19 @@ class HelloActor(name:String) extends Actor {
     super.preStart()
   }
 
-
+  /**
+    * actor只有在发生异常的时候才会重启
+    *
+    * @param reason
+    * @param message
+    */
   override def preRestart(reason: Throwable, message: Option[Any]): Unit = {
-    println("pre restart"+message.get)
+    println(s"because of reason=${reason.getMessage()},before restart message is:"+message.get)
     super.preRestart(reason, message)
   }
 
-
   override def postRestart(reason: Throwable): Unit = {
-    println("post restart")
+    println(s"post restart,reason=${reason.getMessage()}")
     super.postRestart(reason)
   }
 
@@ -27,7 +31,7 @@ class HelloActor(name:String) extends Actor {
 
   override def receive: Receive = {
     case "hello" => println(s"hello actor,$name")
-    case _ => println(s"huh?,$name")
+    case _ => throw new Exception("boom")
   }
 }
 
@@ -41,7 +45,7 @@ object Main extends App {
     val helloActor = system.actorOf(Props(new HelloActor("sweet")),name="helloActor")
     helloActor ! "hello"
    Thread.sleep(1000)
-  //helloActor ! ForceRestart
+   helloActor ! ForceRestart
 
   Thread.sleep(1000)
    system.stop(helloActor)
