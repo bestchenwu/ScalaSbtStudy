@@ -1,13 +1,11 @@
 package unitThirteen
 
-import akka.actor.{Actor, ActorSelection, ActorSystem, Props}
+import akka.actor.{Actor, ActorSelection, ActorSystem, PoisonPill, Props}
 
 case class createChild(name: String);
 
 case class Name(name: String)
 
-case object PersonPill {
-}
 
 class child extends Actor {
 
@@ -42,7 +40,8 @@ object ChildTest extends App {
   parentActor ! createChild("mary")
   Thread.sleep(500)
   val jack = system.actorSelection("/user/Parent/jack")
-  jack ! PersonPill
-  Thread.sleep(5000)
-  system.terminate()
+  //PoisonPill是任何Actor都可以理解的消息，用于立即停止Actor
+  jack ! PoisonPill
+//  Thread.sleep(500)
+//  system.terminate()
 }
