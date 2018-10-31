@@ -1,4 +1,4 @@
-import akka.actor.{Actor, ActorSystem, Props}
+import akka.actor.{Actor, ActorSystem, Kill, Props}
 
 class HelloActor(name:String) extends Actor {
 
@@ -45,10 +45,12 @@ object Main extends App {
     val helloActor = system.actorOf(Props(new HelloActor("sweet")),name="helloActor")
     helloActor ! "hello"
    Thread.sleep(1000)
-   helloActor ! ForceRestart
-
+  //可以给actor 发送kill消息
+    helloActor ! Kill
+//   helloActor ! ForceRestart
+//
   Thread.sleep(1000)
-   system.stop(helloActor)
+//   system.stop(helloActor)
     //helloActor ! "buenos"
     system.terminate()
 }
