@@ -2,9 +2,9 @@ package unitNighteen
 
 import scala.collection.mutable.ArrayBuffer
 
-trait Animal {
-  def speak
-}
+//trait Animal {
+//  def speak
+//}
 
 class DogFamily[x <: dog] extends ArrayBuffer[x]
 
@@ -45,5 +45,9 @@ object VariableCollectionTest extends App {
   def add[A](x:A,y:A)(implicit numeric: Numeric[A])= numeric.plus(x,y)
   val result = add(2,3)
   println(result)
+  //由于上面是类型类的作用方式，只能接受Numeric类型的参数
+  //更多类型类的例子可参见
+  //val result1 = add("test","haha")
+
 
 }
