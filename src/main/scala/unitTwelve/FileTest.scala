@@ -6,9 +6,12 @@ import scala.io.Source
 
 object FileTest extends App {
 
-  //val flieName = "D:\\资料\\美囤妈妈\\BI\\babytree_git\\ScalaSbtStudy\\src\\main\\resources\\data.txt"
-  val flieName = "/data/problem/problem.txt"
-  val bufferedSource = Source.fromFile(flieName)
+  //val fileName = "D:\\资料\\美囤妈妈\\BI\\babytree_git\\ScalaSbtStudy\\src\\main\\resources\\data.txt"
+  //val fileName = "/data/problem/problem.txt"
+  //val bufferedSource = Source.fromFile(fileName)
+  //也可以用字符串伪装成文件
+  val fileName = "test1\ntest2\n"
+  val bufferedSource = Source.fromString(fileName)
   val newLine:Char = '\n'.toChar
   var lineCount = 0
   //这种语法称之为for循环的过滤表达式,或者称为卫语句
