@@ -32,7 +32,7 @@ class PingActor(pone:ActorRef) extends Actor{
          pone ! PingMessage
        }
     }
-    case _=>println("PingActor can't understand:"+_)
+    //case _=>println("PingActor can't understand:"+_)
   }
 }
 
@@ -45,7 +45,7 @@ class PoneActor extends Actor{
       println("ping")
       sender ! PoneMessage
     }
-    case _=>println("PoneActor can't understand:"+_)
+    //case _=>println("PoneActor can't understand:"+_)
   }
 }
 
