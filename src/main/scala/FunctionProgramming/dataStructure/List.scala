@@ -40,9 +40,17 @@ object List {
     * @tparam A
     * @author chenwu on 2019.2.8
     */
+  //  def tail[A](list: List[A]): List[A] = {
+  //    case Nil => Nil
+  //    case Cons(x:A, xs:List[A]) => xs
+  //  }
+
   def tail[A](list: List[A]): List[A] = {
-    case Nil => Nil
-    case Cons(x:A, xs:List[A]) => xs
+    list match {
+      case Nil => Nil
+      case Cons(x: String, xs: List[A]) => xs
+    }
+
   }
 
   /**
@@ -62,9 +70,16 @@ object List {
     }
   }
 
-  def printList[A](list: List[A]): String = {
-    case Nil => ""
-    case Cons(x:A, xs:List[A]) => x + "," + printList(xs)
-  }
+  //  def printList[A](list: List[A]): String = {
+  //    case Nil => ""
+  //    case Cons(x:A, xs:List[A]) => x + "," + printList(xs)
+  //  }
 
+  def printList[A](list: List[A]): String = {
+    list match {
+      case Nil => ""
+      case Cons(x: String, xs: List[String]) => x + "," + printList(xs)
+    }
+
+  }
 }

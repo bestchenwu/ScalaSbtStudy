@@ -1,7 +1,7 @@
 package FunctionProgramming.dataStructure
 
 //导入时候做别名
-import FunctionProgramming.dataStructure.{List => MyList}
+import FunctionProgramming.dataStructure.List
 
 object ListTest {
 
@@ -12,9 +12,9 @@ object ListTest {
   }
 
   def main(args: Array[String]): Unit = {
-        val list = MyList(13, 15,18)
-        val tailList = MyList.tail(list)
-        val result = MyList.printList(tailList)
+        val list = List("13", "15","18")
+        val tailList = List.tail(list)
+        val result = List.printList(tailList)
         println(result)
     //    val sumResult = MyList.sum(list)
     //    print(sumResult)
