@@ -1,7 +1,6 @@
 package FunctionProgramming.dataStructure
 
 //导入时候做别名
-import FunctionProgramming.dataStructure.List
 
 object ListTest {
 
@@ -12,21 +11,15 @@ object ListTest {
   }
 
   def main(args: Array[String]): Unit = {
-        val list = List("13", "15","18")
-        val tailList = List.tail(list)
-        val result = List.printList(tailList)
-        println(result)
-    //    val sumResult = MyList.sum(list)
-    //    print(sumResult)
-//    val x = MyList(1, 2, 3, 4, 5) match {
-//      case Cons(x, Cons(2, Cons(4, _))) => x
-//      case Nil => 42
-//      case Cons(x,Cons(y,Cons(3,Cons(4,_)))) => x+y
-//      case Cons(h,t) => h+MyList.sum(t)
-//    }
-//    print(x)
-    //        val array  = Array(1,2,3)
-    //        echo(array: _*)
-
+    val list = List("13", "15", "18")
+    //取List的尾部
+    val tailList = List.tail(list)
+    //打印list
+    val result = List.printList(tailList)
+    println(result)
+    //置换list的头部元素
+    val newList = List.setHead(list, "abc")
+    val result1 = List.printList(newList)
+    println(result1)
   }
 }

@@ -48,9 +48,25 @@ object List {
   def tail[A](list: List[A]): List[A] = {
     list match {
       case Nil => Nil
-      case Cons(x: String, xs: List[A]) => xs
+      case Cons(x: A, xs: List[A]) => xs
     }
 
+  }
+
+  /**
+    * 置换list的第一个元素
+    *
+    * @param list
+    * @param newHead
+    * @tparam A
+    * @return List[A]
+    * @author chenwu on 2019.2.13
+    */
+  def setHead[A](list: List[A],newHead:A)={
+      list match{
+        case Nil => Nil
+        case Cons(x: A, xs: List[A]) =>{val newList = Cons(newHead,xs);newList}
+      }
   }
 
   /**
@@ -78,7 +94,7 @@ object List {
   def printList[A](list: List[A]): String = {
     list match {
       case Nil => ""
-      case Cons(x: String, xs: List[String]) => x + "," + printList(xs)
+      case Cons(x: A, xs: List[A]) => x.toString() + "," + printList(xs)
     }
 
   }
