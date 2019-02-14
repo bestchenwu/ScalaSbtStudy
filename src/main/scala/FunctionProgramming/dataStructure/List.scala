@@ -54,6 +54,51 @@ object List {
   }
 
   /**
+    * 从列表中拿走前n个元素
+    *
+    * @param list
+    * @param n
+    * @tparam A
+    * @return { @link List}
+    * @author chenwu on 2019.2.14
+    */
+  def drop[A](list: List[A], n: Int): List[A] = {
+    if (n == 0) {
+      list
+    } else {
+      list match {
+        case Nil => Nil
+        case Cons(x: A, t) => drop(t, n - 1)
+      }
+    }
+  }
+
+  /**
+    * 删除列表中前缀全部符合函数f的元素(不是所有符合条件)
+    *
+    * @param list
+    * @param f
+    * @tparam A
+    * @return List[A]
+    * @author chenwu on 2019.2.14
+    */
+  def dropWhile[A](list: List[A], f: A => Boolean): List[A] = {
+
+    list match {
+        //利用了scala case语句里可以带条件表达式的特点
+      case Cons(h,t) if f(h) => dropWhile(t, f)
+      case _ => list
+    }
+  }
+
+  def appendList[A](a:List[A],b:List[A]):List[A]={
+      a match{
+        case Nil => b
+        case Cons(x:A,xs:List[A])=>Cons(x,appendList(xs,b))
+      }
+  }
+
+  /**
     * 置换list的第一个元素
     *
     * @param list
@@ -62,11 +107,13 @@ object List {
     * @return List[A]
     * @author chenwu on 2019.2.13
     */
-  def setHead[A](list: List[A],newHead:A)={
-      list match{
-        case Nil => Nil
-        case Cons(x: A, xs: List[A]) =>{val newList = Cons(newHead,xs);newList}
+  def setHead[A](list: List[A], newHead: A) = {
+    list match {
+      case Nil => Nil
+      case Cons(x: A, xs: List[A]) => {
+        val newList = Cons(newHead, xs); newList
       }
+    }
   }
 
   /**
