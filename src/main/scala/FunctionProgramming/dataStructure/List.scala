@@ -1,5 +1,7 @@
 package FunctionProgramming.dataStructure
 
+import scala.collection.mutable.ListBuffer
+
 //sealed表示该类的所有定义都需要在本文件里完成
 sealed trait List[+A]
 
@@ -85,17 +87,17 @@ object List {
   def dropWhile[A](list: List[A], f: A => Boolean): List[A] = {
 
     list match {
-        //利用了scala case语句里可以带条件表达式的特点
-      case Cons(h,t) if f(h) => dropWhile(t, f)
+      //利用了scala case语句里可以带条件表达式的特点
+      case Cons(h, t) if f(h) => dropWhile(t, f)
       case _ => list
     }
   }
 
-  def appendList[A](a:List[A],b:List[A]):List[A]={
-      a match{
-        case Nil => b
-        case Cons(x:A,xs:List[A])=>Cons(x,appendList(xs,b))
-      }
+  def appendList[A](a: List[A], b: List[A]): List[A] = {
+    a match {
+      case Nil => b
+      case Cons(x: A, xs: List[A]) => Cons(x, appendList(xs, b))
+    }
   }
 
   /**
@@ -111,9 +113,55 @@ object List {
     list match {
       case Nil => Nil
       case Cons(x: A, xs: List[A]) => {
-        val newList = Cons(newHead, xs); newList
+        val newList = Cons(newHead, xs);
+        newList
       }
     }
+  }
+
+  /**
+    * 获取原数组里除了最后一个元素之外的所有元素
+    *
+    * @param list
+    * @tparam A
+    * @return List[A]
+    * @author chenwu on 2019.2.15
+    */
+  def init[A](list: List[A]): List[A] = {
+
+    list match {
+      case Nil => list
+      case Cons(h, Nil) => Nil
+      case Cons(h, t:List[A]) => {
+        new Cons(h, init(t))
+      }
+    }
+  }
+
+  /**
+    * 利用ListBuffer循环添加元素保留元素
+    *
+    * @param list
+    * @tparam A
+    * @return List[A]
+    * @author chenwu on 2019.2.15
+    */
+  def init2[A](list: List[A]): List[A] = {
+
+    val listBuffer = ListBuffer[A]()
+
+    def loop(list: List[A]): List[A] = {
+      list match {
+        case Nil => list
+        case Cons(h, Nil) => apply(listBuffer: _*)
+        case Cons(h, t: List[A]) => {
+          listBuffer.append(h);
+          loop(t)
+        }
+      }
+    }
+
+    loop(list)
   }
 
   /**
@@ -132,11 +180,6 @@ object List {
       Cons(a.head, apply(a.tail: _*))
     }
   }
-
-  //  def printList[A](list: List[A]): String = {
-  //    case Nil => ""
-  //    case Cons(x:A, xs:List[A]) => x + "," + printList(xs)
-  //  }
 
   def printList[A](list: List[A]): String = {
     list match {
