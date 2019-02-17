@@ -1,5 +1,6 @@
 package FunctionProgramming.dataStructure
 
+import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 
 //sealed表示该类的所有定义都需要在本文件里完成
@@ -29,10 +30,61 @@ object List {
 
   def product(doubles: List[Double]): Double = {
     doubles match {
-      case Nil => 0
+      case Nil => 1.0
       case Cons(0.0, _) => 0
       case Cons(x, xs) => x * product(xs)
     }
+  }
+
+  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B = {
+    as match {
+      case Nil => z
+      case Cons(x, xs) => foldRight(xs, f(x, z))(f)
+    }
+  }
+
+
+  def sum2(ints: List[Int]): Int = {
+    foldRight(ints, 0)((x: Int, y: Int) => x + y)
+  }
+
+  def product2(doubles: List[Double]): Double = {
+    foldRight(doubles, 1.0)(_ * _)
+  }
+
+  def length[A](list: List[A]): Int = {
+    foldRight(list, 0)((x: A, y: Int) => y + 1)
+  }
+
+  @tailrec
+  def foldLeft[A, B](as: List[A], z: B)(f: (B, A) => B): B = {
+    as match {
+      case Nil => z
+      case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
+    }
+
+  }
+
+  def sum3(ints: List[Int]): Int = {
+    foldLeft(ints, 0)((x: Int, y: Int) => x + y)
+  }
+
+  /**
+    * 将列表反转
+    *
+    * @param as
+    * @tparam A
+    * @return List[A]
+    * @author chenwu on 2019.2.16
+    */
+  def reverse[A](as: List[A]): List[A] = {
+    val vector = List[A]()
+    foldLeft(as, vector)((x: List[A], y: A) => Cons(y, x))
+  }
+
+  def append2[A](x: List[A], y: List[A]): List[A] = {
+
+    foldRight(x, y)(Cons(_, _))
   }
 
   /**
@@ -132,7 +184,7 @@ object List {
     list match {
       case Nil => list
       case Cons(h, Nil) => Nil
-      case Cons(h, t:List[A]) => {
+      case Cons(h, t: List[A]) => {
         new Cons(h, init(t))
       }
     }
@@ -162,6 +214,27 @@ object List {
     }
 
     loop(list)
+  }
+
+  /**
+    * 对列表里的每个元素加一
+    *
+    * @param list
+    * @return List[Int]
+    * @author chenwu on 2019.2.17
+    */
+  def add1(list: List[Int]): List[Int] = {
+
+    list match {
+      case Nil => list
+      case Cons(x, xs) => Cons(x + 1, add1(xs))
+    }
+  }
+
+  def transToString(doubles:List[Double]):List[String]={
+
+    //todo:
+    null
   }
 
   /**
