@@ -231,10 +231,90 @@ object List {
     }
   }
 
-  def transToString(doubles:List[Double]):List[String]={
+  /**
+    * 将double list里的每一个元素都转化成为String
+    *
+    * @param doubles
+    * @return List[String]
+    * @author chenwu on 2019.2.18
+    */
+  def transToString(doubles: List[Double]): List[String] = {
+    var strings = ListBuffer[String]()
 
+    def loop(doubles: List[Double]): List[String] = {
+      doubles match {
+        case Nil => apply(strings: _*)
+        case Cons(x, xs) => {
+          strings.append(x.toString); loop(xs)
+        }
+      }
+    }
+
+    loop(doubles)
+  }
+
+  def transToString2(doubles: List[Double]): List[String] = {
+    doubles match {
+      case Nil => Nil
+      case Cons(x, xs) => Cons(x.toString, transToString2(xs))
+    }
+  }
+
+  def map[A, B](as: List[A])(f: A => B): List[B] = {
+    as match {
+      case Nil => Nil
+      case Cons(x, xs) => Cons(f(x), map(xs)(f))
+    }
+  }
+
+  //  def filter[A](as:List[A])(f:A=>Boolean):List[A]={
+  //    as match {
+  //      case Cons(x, xs) if(f(x))=>filter(xs)(f)
+  //      case _ => as
+  //    }
+  //  }
+
+  /**
+    * 根据函数f 过滤列表as
+    *
+    * @param as
+    * @param f
+    * @tparam A
+    * @return List[A]
+    * @author chenwu on 2019.2.18
+    */
+  //todo:是否有不利用ListBuffer的方式
+  def filter[A](as: List[A])(f: A => Boolean): List[A] = {
+    val newList = ListBuffer[A]()
+    def loop(as: List[A]): List[A] = {
+
+      as match {
+        case Cons(x, xs) => {
+          if (!f(x)) {
+            newList.append(x)
+          }
+          loop(xs)
+        }
+        case Nil => apply(newList: _*)
+      }
+    }
+
+    loop(as)
+  }
+
+  /**
+    * 对列表as里的所有元素都应用f函数,并展开成List
+    *
+    * @param as
+    * @param f
+    * @tparam A
+    * @tparam B
+    * @return List[B]
+    * @author chenwu on 2019.2.18
+    */
+  def flatMap[A,B](as:List[A])(f:A=>List[B]):List[B]={
     //todo:
-    null
+    Nil
   }
 
   /**

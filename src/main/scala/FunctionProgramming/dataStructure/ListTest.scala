@@ -12,8 +12,8 @@ object ListTest {
 
 
   def main(args: Array[String]): Unit = {
-    val list = List("13", "15", "18")
-    val list1 = List("a", "b", "c")
+//    val list = List("13", "15", "18")
+//    val list1 = List("a", "b", "c")
     //取List的尾部
     //    val tailList = List.tail(list)
     //    //打印list
@@ -47,7 +47,7 @@ object ListTest {
     //    val newList = List.init2(list1)
     //    val result1 = List.printList(newList)
     //    println(result1)
-    val list3 = List(13, 12, 11)
+    //  val list3 = List(13, 12, 11)
     //    var result = List.sum2(list3)
     //    println(result)
     //    result = List.length(list3)
@@ -56,7 +56,16 @@ object ListTest {
     //    println(result)
     //    val result1 = List.reverse(list3)
     //    println(result1)
-    val result1 = List.add1(list3)
-    println(result1)
+    //    val result1 = List.add1(list3)
+    //    println(result1)
+//    val list4 = List(12.0, 13.5, 11.8)
+    //val result1 = List.transToString(list4)
+//    val result1 = List.transToString2(list4)
+//    print(result1)
+//    val result1 = List.map(list4)((x:Double)=>x.toString)
+//    print(result1)
+    val list1 = List(22,11,13,14,15,18)
+    val result1 = List.filter(list1)((x:Int)=>x%2!=0)
+    print(result1)
   }
 }
