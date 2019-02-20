@@ -245,7 +245,8 @@ object List {
       doubles match {
         case Nil => apply(strings: _*)
         case Cons(x, xs) => {
-          strings.append(x.toString); loop(xs)
+          strings.append(x.toString);
+          loop(xs)
         }
       }
     }
@@ -286,6 +287,7 @@ object List {
   //todo:是否有不利用ListBuffer的方式
   def filter[A](as: List[A])(f: A => Boolean): List[A] = {
     val newList = ListBuffer[A]()
+
     def loop(as: List[A]): List[A] = {
 
       as match {
@@ -312,10 +314,25 @@ object List {
     * @return List[B]
     * @author chenwu on 2019.2.18
     */
-  def flatMap[A,B](as:List[A])(f:A=>List[B]):List[B]={
-    //todo:
-    Nil
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = {
+    //todo:有不利用appendList()方法来实现的方式吗?
+    var resultList = List[B]()
+
+    def loop(as: List[A]): List[B] = {
+      as match {
+
+        case Nil => resultList
+        case Cons(x, xs) => {
+          val newList = f(x);
+          resultList = appendList(resultList, newList);
+          loop(xs)
+        }
+      }
+    }
+    loop(as)
   }
+
+
 
   /**
     * 内置函数 可以使用List(A)来初始化<br/>
