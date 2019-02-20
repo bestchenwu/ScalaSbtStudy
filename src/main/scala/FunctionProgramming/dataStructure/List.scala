@@ -329,10 +329,60 @@ object List {
         }
       }
     }
+
     loop(as)
   }
 
+  /**
+    * 利用flatmap函数来实现filter
+    *
+    * @param as
+    * @param f
+    * @tparam A
+    * @return List[B]
+    * @author chenwu on 2019.2.20
+    */
+  def filter2[A](as: List[A])(f: A => Boolean): List[A] = {
+    flatMap(as)((x: A) => {
+      if (f(x)) {
+        Cons[A](x, Nil)
+      } else {
+        Nil
+      }
+    })
+  }
 
+  /**
+    * 调用函数f对列表a,b的元素逐一运算得到新列表
+    *
+    * @param a
+    * @param b
+    * @param f
+    * @tparam A
+    * @return List[A]
+    * @author chenwu on 2019.2.20
+    */
+  def zipWith[A](a: List[A], b: List[A])(f: (A, A) => A): List[A] = {
+    var resultList = List[A]()
+
+    def loop(a: List[A], b: List[A]): List[A] = {
+      a match {
+        case Nil => resultList
+        case Cons(ax, axs) => {
+          b match {
+            case Nil => resultList
+            case Cons(bx, bxs) => {
+              val newA = f(ax, bx)
+              resultList = Cons(newA, resultList)
+              loop(axs, bxs)
+            }
+          }
+        }
+      }
+    }
+
+    reverse(loop(a, b))
+  }
 
   /**
     * 内置函数 可以使用List(A)来初始化<br/>
