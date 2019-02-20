@@ -385,6 +385,43 @@ object List {
   }
 
   /**
+    * 检查sup是否包含sub
+    *
+    * @param sup
+    * @param sub
+    * @tparam A
+    * @return boolean
+    * @author chenwu on 2019.2.20
+    */
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
+
+    def loop(sup: List[A], sub: List[A]): Boolean = {
+      sup match {
+        case Nil => {
+          sub match {
+            case Nil => true
+            case _ => false
+          }
+        }
+        case Cons(x, xs) => {
+          sub match {
+            case Nil => true
+            case Cons(y, ys) => {
+              if (x == y) {
+                loop(xs, ys)
+              } else {
+                loop(xs, sub)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    loop(sup, sub)
+  }
+
+  /**
     * 内置函数 可以使用List(A)来初始化<br/>
     * 这里A* 代表一个或者多个参数列表
     *
