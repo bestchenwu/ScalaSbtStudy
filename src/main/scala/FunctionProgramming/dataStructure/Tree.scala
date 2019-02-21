@@ -46,6 +46,47 @@ object Tree {
   }
 
   /**
+    * 计算树的最大深度(从根节点到叶子节点的最长距离)
+    *
+    * @param tree
+    * @return Int
+    * @author chenwu on 2019.2.21
+    */
+  def depth(tree: Tree[Int]): Int = {
+    val sum: Int = 0
+
+    tree match {
+      case Leaf(_) => 0
+      case Branch(left, right, _) => (1 + depth(left)) max (1 + depth(right))
+      case null => 0
+    }
+  }
+
+  /**
+    * 逐一对tree里的所有元素逐一应用f函数<br/>
+    * 从而生成一个新的Tree
+    *
+    * @param tree
+    * @param f
+    * @tparam A
+    * @tparam B
+    * @return Tree
+    * @author chenwu on 2019.2.21
+    */
+  def map[A](tree: Tree[A])(f: A => A): Tree[A] = {
+
+    def loop[A](tree: Tree[A]): Tree[A] = {
+      tree match {
+        case Leaf(a) => Leaf[A](f(a))
+        case Branch(left, right, node) => Branch(loop(left), loop(right), f(node))
+        case null => null
+      }
+    }
+
+    loop(tree)
+  }
+
+  /**
     *
     * 构建二叉树(比当前节点小的放左边,比当前节点大的放右边)
     *
