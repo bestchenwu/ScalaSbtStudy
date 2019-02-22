@@ -73,17 +73,25 @@ object Tree {
     * @return Tree
     * @author chenwu on 2019.2.21
     */
-  def map[A](tree: Tree[A])(f: A => A): Tree[A] = {
+  def map[A,B](tree: Tree[A])(f: A => B): Tree[B] = {
 
-    def loop[A](tree: Tree[A]): Tree[A] = {
-      tree match {
-        case Leaf(a) => Leaf[A](f(a))
-        case Branch(left, right, node) => Branch(loop(left), loop(right), f(node))
-        case null => null
-      }
+    tree match {
+      case Leaf(a) => Leaf(f(a))
+      case Branch(left, right, node) => Branch(map(left)(f), map(right)(f), f(node))
+      case null => null
     }
 
-    loop(tree)
+    //todo:type mismatch
+    //todo:found a.type (with underlying type A),required:A
+//    def loop[A,B](tree: Tree[A]): Tree[B] = {
+//      tree match {
+//        case Leaf(a) => Leaf(f(a))
+//        case Branch(left, right, node) => Branch(loop(left), loop(right), f(node))
+//        case null => null
+//      }
+//    }
+//
+//    loop(tree)
   }
 
   /**
