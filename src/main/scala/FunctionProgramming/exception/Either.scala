@@ -18,9 +18,20 @@ sealed trait Either[+E,+A]{
     * @return
     */
   def flatMap[EE>:E,B](f:A=>Either[EE,B]):Either[EE,B]={
-      //todo:
-      null
+      this match{
+        case Left(e)=>Left(e)
+        case Right(value)=>f(value)
+      }
   }
+
+  def orElse[EE>:E,B>:A](b: =>Either[EE,B]):Either[EE,B]={
+   null
+  }
+
+  def map2[EE>:E,B,C](b:Either[EE,B])(f:(A,B)=>C):Either[EE,C]={
+    null
+  }
+
 }
 
 /**
