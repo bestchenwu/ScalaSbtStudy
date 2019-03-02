@@ -1,5 +1,7 @@
 package FunctionProgramming.exception
 
+import scala.collection.mutable.ArrayBuffer
+
 sealed trait Either[+E, +A] {
 
   def map[B](f: A => B): Either[E, B] = {
@@ -54,26 +56,31 @@ sealed trait Either[+E, +A] {
     * @author chenwu on 2019.3.1
     */
   def sequence[E, A](es: List[Either[E, A]]): Either[E, List[A]] = {
-    //todo:
-    null
+    if (es.isEmpty) {
+      Left("es is empty")
+    }
+    val valueBuffer = ArrayBuffer[A]()
+
+    def loop(es: List[Either[E, A]]): Either[E, List[A]] = {
+      val head = es.head
+      val tail = es.tail
+      head match {
+        case Left(exception) => Left(exception)
+        case Right(value) => {
+          valueBuffer.append(value)
+          if (tail.isEmpty) {
+            Right(valueBuffer.toList)
+          } else {
+            loop(tail)
+          }
+        }
+      }
+    }
+
+    loop(es)
   }
 
-  /**
-    * 对列表里的每一个元素循环调用f函数,如果结果为Right，则加入列表中<br/>
-    * 只要有一个为Wrong，则返回Left
-    *
-    * @param as
-    * @param f
-    * @tparam E
-    * @tparam A
-    * @tparam B
-    * @return Either[E,List[B]]
-    * @author chenwu on 2019.3.1
-    */
-  def traverse[E,A,B](as:List[A])(f:A=>Either[E,B]):Either[E,List[B]]={
-    //todo:
-    null
-  }
+
 }
 
 
@@ -103,6 +110,44 @@ object Either {
     } else {
       Right(xs.sum / xs.size)
     }
+  }
+
+  /**
+    * 对列表里的每一个元素循环调用f函数,如果结果为Right，则加入列表中<br/>
+    * 只要有一个为Wrong，则返回Left
+    *
+    * @param as
+    * @param f
+    * @tparam E
+    * @tparam A
+    * @tparam B
+    * @return Either[E,List[B]]
+    * @author chenwu on 2019.3.1
+    */
+  def traverse[E, A, B](as: List[A])(f: A => Either[E, B]): Either[E, List[B]] = {
+    if (as.isEmpty) {
+      Left("as is empty")
+    }
+    val list = ArrayBuffer[B]()
+
+    def loop(as: List[A]): Either[E, List[B]] = {
+      val head = as.head
+      val tail = as.tail
+      val b = f(head)
+      b match {
+        case Left(e) => Left(e)
+        case Right(rightB) => {
+          list.append(rightB)
+          if (tail.isEmpty) {
+            Right(list.toList)
+          } else {
+            loop(tail)
+          }
+        }
+      }
+    }
+
+    loop(as)
   }
 
 
