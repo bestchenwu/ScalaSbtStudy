@@ -119,6 +119,21 @@ sealed trait Stream[+A] {
 
     loop(this)
   }
+
+  /**
+    * 判断集合里面是否包含符合p函数的值<br/
+    * 这里p() || exists 属于惰性化,分离了求值表达式和它的描述
+    *
+    * @param p
+    * @return
+    * @author chenwu on 2019.3.3
+    */
+  def exists(p: A => Boolean): Boolean = {
+    this match {
+      case Cons(h, t) => p(h()) || t().exists(p)
+      case _ => false
+    }
+  }
 }
 
 case object Empty extends Stream[Nothing]
