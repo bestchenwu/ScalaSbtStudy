@@ -3,14 +3,22 @@ package FunctionProgramming.laziness
 object StreamTest {
 
   def main(args: Array[String]): Unit = {
-    val stream = Stream.apply(10,1, 3, 5, 8)
+    val stream = Stream.apply(1, 10, 3, 4, 9, 8)
     //    val list = stream.take(2)
     //    println(list)
     //val result = stream.drop(8)
     //print(result.toList)
     //val result = stream.toList
     //print(result)
-    val result = stream.takeWhile(_ % 2 != 0).toList
-    print(result)
+    //    val result = stream.takeWhile(_ % 2 != 0).toList
+    //    print(result)
+    //val result = stream.exists2(_ % 2 == 0)
+    //    val result = stream.forAll(_ % 2 != 0)
+    //    print(result)
+    //      val streamB = stream.map((x:Int)=>x*2)
+    //      print(streamB.toList)
+    val stream2 = Stream.apply(11, 12, 13)
+    val result = stream.append(stream2)
+    print(result.toList)
   }
 }

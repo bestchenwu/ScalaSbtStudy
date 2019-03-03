@@ -134,6 +134,110 @@ sealed trait Stream[+A] {
       case _ => false
     }
   }
+
+  /**
+    * 循环对流式里的所有元素循环调用f,得到最终结果
+    *
+    * @param z
+    * @param f
+    * @tparam B
+    * @return B
+    * @author chenwu on 2019.3.3
+    */
+  def foldRight[B](z: => B)(f: (A, B) => B): B = {
+    this match {
+      case Cons(h, t) => f(h(), t().foldRight(z)(f))
+      case _ => z
+    }
+  }
+
+  /**
+    * 使用foldRight来判断是否存在p函数的方法
+    *
+    * @param p
+    * @return Boolean
+    * @author chenwu on 2019.3.3
+    */
+  def exists2(p: A => Boolean): Boolean = {
+    //惰性求值,如果p(a)符合,则不对b表达式求值了
+    foldRight(false)((a, b) => p(a) || b)
+  }
+
+  /**
+    * 检查Stream中的所有元素是否与给定的断言匹配<br/>
+    * 遇到不匹配的值应该立即终止遍历
+    *
+    * @param p
+    * @return Boolean
+    * @author chenwu on 2019.3.3
+    */
+  def forAll(p: A => Boolean): Boolean = {
+    this match {
+      case Cons(h, t) => {
+        if (!p(h())) {
+          false
+        } else {
+          t().forAll(p)
+        }
+      }
+      case Empty => true
+    }
+  }
+
+  /**
+    * 使用foldRight来实现takeWhile
+    *
+    * @param f
+    * @return Stream
+    * @author chenwu on 2019.3.3
+    */
+  def takeWhile2(f: A => Boolean): Stream[A] = {
+
+    foldRight(Stream.empty[A])((h, t) => {
+      if (f(h)) {
+        Stream.cons(h, t)
+      } else {
+        Stream.empty[A]
+      }
+    })
+
+  }
+
+  def headOption2(): Option[A] = {
+    //t不传入进去,则循环只会执行一次
+    foldRight(None: Option[A])((h, t) => Some(h))
+  }
+
+  def map[B](f: A => B): Stream[B] = {
+    foldRight(Stream.empty[B])((h, t) => Stream.cons(f(h), t))
+  }
+
+  def filter(f: A => Boolean): Stream[A] = {
+    foldRight(Stream.empty[A])((h, t) => {
+      if (f(h)) {
+        Stream.cons(h, t)
+      } else {
+        //如果不满足条件,z再次被初始化为empty
+        t
+      }
+    })
+  }
+
+  /**
+    * 添加新的stream
+    *
+    * @param s
+    * @tparam B
+    * @return Stream
+    * @author chenwu on 2019.3.3
+    */
+  def append[B >: A](s: => Stream[B]): Stream[B] = {
+    foldRight(s)((h, t) => Stream.cons(h, t))
+  }
+
+  def flatMap[B](f: A => Stream[B]): Stream[B] = {
+    foldRight(Stream.empty[B])((h, t) => f(h) append t)
+  }
 }
 
 case object Empty extends Stream[Nothing]
