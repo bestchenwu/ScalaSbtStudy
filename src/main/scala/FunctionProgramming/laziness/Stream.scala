@@ -238,6 +238,8 @@ sealed trait Stream[+A] {
   def flatMap[B](f: A => Stream[B]): Stream[B] = {
     foldRight(Stream.empty[B])((h, t) => f(h) append t)
   }
+
+
 }
 
 case object Empty extends Stream[Nothing]
@@ -254,6 +256,8 @@ case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
 
 object Stream {
+
+  val ones: Stream[Int] = Stream.cons(1, ones)
 
   def cons[A](hd: => A, tl: => Stream[A]): Stream[A] = {
     //对惰性求值的函数做延迟初始化
@@ -281,5 +285,43 @@ object Stream {
     }
   }
 
+  /**
+    * 返回一个只包含常量的Stream
+    *
+    * @param a
+    * @tparam A
+    * @return
+    * @author chenwu on 2019.3.5
+    */
+  def constant[A](a: A): Stream[A] = {
+    //对一个变量添加lazy修饰符,会使scala延迟求值,直到变量第一次被引用的时候
+    // 如果不添加lazy修饰符,会报forward reference extends over definition of value错误
+    // todo:--引用在求值计算之前的错误?
+    lazy val constantStream: Stream[A] = Stream.cons(a, constantStream)
+    constantStream
+  }
 
+  /**
+    * 生成整数无限流,从n开始,然后n+1,n+2,...
+    *
+    * @param n
+    * @return
+    */
+  def from(n: Int): Stream[Int] = {
+    cons(n, from(n + 1))
+  }
+
+  /**
+    * 生成0,1,1,2,3,5,8...等的数列
+    *
+    * @return
+    */
+  def fibs(): Stream[Int] = {
+
+    def loop(a: Int, b: Int): Stream[Int] = {
+      cons(a, loop(b, a + b))
+    }
+
+    loop(0, 1)
+  }
 }

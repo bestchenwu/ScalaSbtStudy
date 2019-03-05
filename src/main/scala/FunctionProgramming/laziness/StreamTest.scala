@@ -17,8 +17,14 @@ object StreamTest {
     //    print(result)
     //      val streamB = stream.map((x:Int)=>x*2)
     //      print(streamB.toList)
-    val stream2 = Stream.apply(11, 12, 13)
-    val result = stream.append(stream2)
-    print(result.toList)
+    //    val stream2 = Stream.apply(11, 12, 13)
+    //    val result = stream.append(stream2)
+    //    print(result.toList)
+    //无限流
+    //print(Stream.ones.take(3))
+    //      val abcStream = Stream.constant[String]("abc")
+    //      print(abcStream.take(5))
+    val fibsStream = Stream.fibs()
+    print(fibsStream.take(5))
   }
 }
