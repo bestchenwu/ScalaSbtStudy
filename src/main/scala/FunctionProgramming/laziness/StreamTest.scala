@@ -3,7 +3,7 @@ package FunctionProgramming.laziness
 object StreamTest {
 
   def main(args: Array[String]): Unit = {
-    val stream = Stream.apply(1, 10, 3, 4, 9, 8)
+    val stream = Stream.apply(1, 10, 3)
     //    val list = stream.take(2)
     //    println(list)
     //val result = stream.drop(8)
@@ -24,7 +24,15 @@ object StreamTest {
     //print(Stream.ones.take(3))
     //      val abcStream = Stream.constant[String]("abc")
     //      print(abcStream.take(5))
-    val fibsStream = Stream.fibs()
-    print(fibsStream.take(5))
+    //    val fibsStream = Stream.fibs()
+    //    print(fibsStream.take(5))
+    //      val unfoldStream = Stream.unfold[Int,Int](1)((x:Int)=>Option(x,x*2))
+    //      print(unfoldStream.take(5))
+    //print(Stream.fibsInUnfold().take(5))
+    val list = Stream.tails(stream).toList
+    for (streamItem <- list) {
+      println(streamItem.toList)
+    }
+
   }
 }

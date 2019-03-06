@@ -239,7 +239,6 @@ sealed trait Stream[+A] {
     foldRight(Stream.empty[B])((h, t) => f(h) append t)
   }
 
-
 }
 
 case object Empty extends Stream[Nothing]
@@ -324,4 +323,64 @@ object Stream {
 
     loop(0, 1)
   }
+
+  /**
+    * 守护递归<br/>
+    *
+    * @param f f函数表示生成下一个状态的函数,只要f函数返回的Option有效,那么这就是一个无限流
+    * @tparam A
+    * @tparam S Z表示初始状态
+    * @return Stream[A]
+    * @author chenwu on 2019.3.6
+    */
+  def unfold[A, S](Z: S)(f: S => Option[(A, S)]): Stream[A] = {
+
+    def loop(z: S): Stream[A] = {
+      val newA = f(z)
+      newA match {
+        case Some(item) => Stream.cons(item._1, loop(item._2))
+        case None => Stream.empty[A]
+      }
+    }
+
+    loop(Z)
+  }
+
+  /**
+    * 使用unfold函数来实现fibs
+    *
+    * @return
+    * @author chenwu on 2019.3.6
+    */
+  def fibsInUnfold(): Stream[Int] = {
+    unfold((0, 1)) {
+      case (f0, f1) => Some((f0, (f1, f0 + f1)))
+    }
+  }
+
+  def fromInUnFold(n: Int): Stream[Int] = {
+    unfold[Int, Int](n)(n => Some(((n, n + 1))))
+  }
+
+  def constantInUnFold(n: Int): Stream[Int] = {
+    unfold(n)(n => Some((n, n)))
+  }
+
+  /**
+    * 使用unfold实现tails函数,返回这个stream输入序列的所有后缀<br/>
+    * 比如给定Stream(1,2,3) 返回Stream(Stream(1,2,3),Stream(2,3),Stream(3),Stream())
+    *
+    * @return Stream
+    * @author chenwu on 2019.3.6
+    */
+  def tails[A](stream: Stream[A]): Stream[Stream[A]] = {
+    Stream.unfold(stream)(stream => {
+        stream match{
+          case Cons(h,t)=>Some(stream,t())
+          case empty=>None
+        }
+    }).append(empty)
+  }
+
+
 }
