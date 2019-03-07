@@ -11,12 +11,23 @@ trait RNG {
   def nextInt: (Int, RNG)
 
   /** 一个状态到另一个状态,称为状态转移 **/
-  type RAND[+A] = RNG=>(A,RNG) //组合子
+  //接受RNG类型的参数,返回(A,RNG)的组合
+  //scala中type用于声明一个类型别名,这里把RNG => (A, RNG)这样的转换称为一个组合子
+  type RAND[+A] = RNG => (A, RNG) //组合子
 
-  val randInt:RAND[Int] = _.nextInt
+  val rand_int: RAND[Int] = _.nextInt
 
-  def unit[A](a:A):RAND[A]= rng=>(a,rng)
+  def unit[A](a: A): RAND[A] = rng => (a, rng)
 
+  def map[A, B](s: RAND[A])(f: A => B): RAND[B] = rng => {
+    val (a, rng2) = s(rng)
+    val newB = f(a)
+    (newB, rng2)
+  }
+
+  def randomDoubleViaRand(rng: RAND[Int]): RAND[Double]={
+      map(rng)(x=>x.toDouble/Int.MaxValue)
+  }
 }
 
 
