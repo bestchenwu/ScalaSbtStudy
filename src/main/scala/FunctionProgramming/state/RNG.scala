@@ -25,8 +25,20 @@ trait RNG {
     (newB, rng2)
   }
 
-  def randomDoubleViaRand(rng: RAND[Int]): RAND[Double]={
-      map(rng)(x=>x.toDouble/Int.MaxValue)
+  def randomDoubleViaRand(rng: RAND[Int]): RAND[Double] = {
+    map(rng)(x => x.toDouble / Int.MaxValue)
+  }
+
+  def map2[A, B, C](ra: RAND[A], rb: RAND[B])(f: (A, B) => C): RAND[C] = rng => {
+    val (a, rngA) = ra(rng)
+    val (b, rngB) = rb(rngA)
+    (f(a, b), rngB)
+  }
+
+  def flatMap[A,B](f:RAND[A])(g: A=>RAND[B]):RAND[B]=rng=>{
+      val (a,rngA)=f(rng)
+      val randB =g(a)
+      randB
   }
 }
 
@@ -83,4 +95,6 @@ case class SimpleRng(seed: Long) extends RNG {
     val (int, rng2) = rng.nextInt
     (int.toDouble / Int.MaxValue, rng2)
   }
+
+
 }
