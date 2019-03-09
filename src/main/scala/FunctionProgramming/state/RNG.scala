@@ -38,10 +38,38 @@ trait RNG {
   def flatMap[A,B](f:RAND[A])(g: A=>RAND[B]):RAND[B]=rng=>{
       val (a,rngA)=f(rng)
       val randB =g(a)
-      randB
+      randB(rngA)
+  }
+
+  def mapViaFlatMap[A, B](s: RAND[A])(f: A => B): RAND[B]={
+      flatMap(s)(a=>unit(f(a)))
+  }
+
+  def map2ViaFlatMap[A, B, C](ra: RAND[A], rb: RAND[B])(f: (A, B) => C): RAND[C]={
+    flatMap(ra)(a => map(rb)(b => f(a, b)))
   }
 }
+case class State[S,+A](run:S=>(A,S)){
 
+  def map[B](f: A => B): State[S, B] ={
+      //flatMap()
+      null
+  }
+
+  def flatMap[B](f: A => State[S, B]): State[S, B] = State(s => {
+    val (a,s1) = run(s)
+    f(a).run(s1)
+  })
+}
+
+object State {
+
+  type RAND[A]=State[RNG,A]
+
+  def unit[A](a: A): RAND[A] = {
+    State(s=>(a,s))
+  }
+}
 
 case class SimpleRng(seed: Long) extends RNG {
 
