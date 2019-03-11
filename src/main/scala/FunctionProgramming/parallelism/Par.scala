@@ -58,8 +58,8 @@ trait Par[A] {
     * @tparam B
     * @return
     */
-  def map[A,B](pa:Par[A])(f:A=>B):Par[B]={
-    map2(pa,unit())((a,_)=>f(a))
+  def map[A, B](pa: Par[A])(f: A => B): Par[B] = {
+    map2(pa, unit())((a, _) => f(a))
   }
 
   /**
@@ -94,8 +94,8 @@ trait Par[A] {
     * @tparam B
     * @return
     */
-  def asyncF[A,B](f:A=>B):A => Par[B]=(a:A)=>{
-      lazyUnit(f(a))
+  def asyncF[A, B](f: A => B): A => Par[B] = (a: A) => {
+    lazyUnit(f(a))
   }
 
   /**
@@ -108,9 +108,21 @@ trait Par[A] {
   def run[A](s: ExecutorService)(a: Par[A]): Future[A] = a(s)
 
 
+  def sortPar(parList: Par[List[Int]]): Par[List[Int]] = {
+    map2(parList, unit())((a, _) => a.sorted)
+  }
 
-  def sortPar(parList:Par[List[Int]]):Par[List[Int]]={
-    map2(parList,unit())((a,_)=>a.sorted)
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] = {
+
+    ps match {
+      case Nil => unit(Nil)
+      case h :: t => map2(h, fork(sequence(t)))(_ :: _)
+    }
+  }
+
+  def parMap[A, B](ps: List[A])(f: A => B): Par[List[B]] = {
+    val list: List[Par[B]] = ps.map(asyncF(f))
+    sequence(list)
   }
 
   def sum(ints: IndexedSeq[Int]): Int = {
