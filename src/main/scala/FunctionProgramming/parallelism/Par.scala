@@ -45,7 +45,7 @@ trait Par[A] {
     */
   def map2[A, B, C](a: Par[A], b: Par[B])(f: (A, B) => C): Par[C] = (es: ExecutorService) => {
     val aValue = a(es)
-    val bValue = a(es)
+    val bValue = b(es)
     UnitFuture(f(aValue.get(), bValue.get()))
   }
 
@@ -125,6 +125,18 @@ trait Par[A] {
     sequence(list)
   }
 
+  def parFilter[A](as:List[A])(f:A=>Boolean):Par[List[A]]={
+        val list:List[Par[List[A]]] = as map (asyncF((a:A)=>{
+            if(f(a)){
+              List(a)
+            }else{
+              List()
+            }
+        }))
+    //将list打散并合并
+    map(sequence(list))(_.flatten)
+  }
+
   def sum(ints: IndexedSeq[Int]): Int = {
     if (ints.size <= 1) {
       ints.headOption.getOrElse(0)
@@ -138,6 +150,7 @@ trait Par[A] {
   }
 }
 
+case class ParImpl[A](es:ExecutorService) extends  Par[A]
 
 object Par {
   def main(args: Array[String]): Unit = {
