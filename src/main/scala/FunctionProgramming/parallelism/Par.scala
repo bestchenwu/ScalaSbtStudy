@@ -125,16 +125,42 @@ trait Par[A] {
     sequence(list)
   }
 
-  def parFilter[A](as:List[A])(f:A=>Boolean):Par[List[A]]={
-        val list:List[Par[List[A]]] = as map (asyncF((a:A)=>{
-            if(f(a)){
-              List(a)
-            }else{
-              List()
-            }
-        }))
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
+    val list: List[Par[List[A]]] = as map (asyncF((a: A) => {
+      if (f(a)) {
+        List(a)
+      } else {
+        List()
+      }
+    }))
     //将list打散并合并
     map(sequence(list))(_.flatten)
+  }
+
+  /**
+    * 查找队列里最大的元素
+    *
+    * @param seq
+    * @param es
+    * @return Int
+    * @author chenwu on 2019.3.13
+    */
+  def findMax(seq: IndexedSeq[Int])(es: ExecutorService): Int = {
+
+    def loop(seq: IndexedSeq[Int]): Int = {
+      if (seq.size <= 1) {
+        seq.headOption.getOrElse(0)
+      } else {
+        val halfLength: Int = seq.length / 2
+        val (lSeq, rightSeq) = seq.splitAt(halfLength)
+        val parLeft = unit(loop(lSeq))
+        val parRight = unit(loop(rightSeq))
+        val maxPar: Par[Int] = map2(parLeft, parRight)((x, y) => (x max y))
+        run(es)(maxPar).get()
+      }
+    }
+
+    loop(seq)
   }
 
   def sum(ints: IndexedSeq[Int]): Int = {
@@ -150,7 +176,7 @@ trait Par[A] {
   }
 }
 
-case class ParImpl[A](es:ExecutorService) extends  Par[A]
+case class ParImpl[A](es: ExecutorService) extends Par[A]
 
 object Par {
   def main(args: Array[String]): Unit = {
