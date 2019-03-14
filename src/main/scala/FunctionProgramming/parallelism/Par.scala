@@ -137,6 +137,10 @@ trait Par[A] {
     map(sequence(list))(_.flatten)
   }
 
+  def equal[A](a:Par[A],b:Par[A])(es:ExecutorService):Boolean = {
+      a(es).get.equals(b(es).get)
+  }
+
   /**
     * 查找队列里最大的元素
     *
