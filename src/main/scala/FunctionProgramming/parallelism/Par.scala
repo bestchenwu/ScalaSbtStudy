@@ -72,7 +72,7 @@ trait Par[A] {
   def fork[A](a: => Par[A]): Par[A] = (es: ExecutorService) => {
     es.submit(new Callable[A] {
       override def call(): A = {
-        a(es).get()
+        a(es).get
       }
     })
   }
@@ -137,8 +137,8 @@ trait Par[A] {
     map(sequence(list))(_.flatten)
   }
 
-  def equal[A](a:Par[A],b:Par[A])(es:ExecutorService):Boolean = {
-      a(es).get.equals(b(es).get)
+  def equal[A](a: Par[A], b: Par[A])(es: ExecutorService): Boolean = {
+    a(es).get.equals(b(es).get)
   }
 
   /**
@@ -166,6 +166,32 @@ trait Par[A] {
 
     loop(seq)
   }
+
+  def delay[A](fa: => Par[A]): Par[A] = es => fa(es)
+
+  def choice[A](condA: Par[Boolean])(left: Par[A], right: Par[A]): Par[A] = es => {
+    val result = run(es)(condA).get
+    if (result) {
+      left(es)
+    } else {
+      right(es)
+    }
+  }
+
+  /**
+    * 从条件里执行,获取需要去执行的算子
+    *
+    * @param n
+    * @param choices
+    * @tparam A
+    * @return Par
+    * @author chenwu on 2019.3.16
+    */
+  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] = es => {
+    val result = run(es)(n).get
+    choices(result)(es)
+  }
+
 
   def sum(ints: IndexedSeq[Int]): Int = {
     if (ints.size <= 1) {
