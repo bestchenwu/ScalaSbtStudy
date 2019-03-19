@@ -1,7 +1,5 @@
 package FunctionProgramming.test
 
-import java.util.Random
-
 import FunctionProgramming.state.{RNG, State}
 
 
@@ -33,26 +31,38 @@ trait Prop {
     //Gen(State(RNG.nonNegativeInt).map(n=>n%stopExcusive-start+start))
 
     //answer2
-    Gen(State(rng=>RNG.nonNegativeInt(rng) match{
-      case (n,rng2)=>(n%(stopExcusive-start)+start,rng2)
+    Gen(State(rng => RNG.nonNegativeInt(rng) match {
+      case (n, rng2) => (n % (stopExcusive - start) + start, rng2)
     }))
   }
 
-  def unit[A](f: =>A):Gen[A] = {
-      Gen(State(rng=>(f,rng)))
+  def unit[A](f: => A): Gen[A] = {
+    Gen(State(rng => (f, rng)))
   }
 
-}
+  //todo:这个函数的作用是什么
+  def boolean: Gen[Boolean]
 
-class SimpleProp extends Prop{
-  override def check: Boolean = {
-    true
+  /**
+    * 基于生成器g,获取长度为N的列表
+    *
+    * @param n
+    * @param g
+    * @tparam A
+    * @return
+    */
+  def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] = {
+    val result: Gen[List[A]] = Gen(State(rng => (List(), rng)))
+
+    def loop(n: Int, g: Gen[A]): Gen[List[A]] = {
+      if (n == 0) {
+        result
+      }
+      result
+    }
+
+    result
   }
-}
-
-case class Gen[A](sample: State[RNG, A]) {
-
-
 }
 
 object Prop {
