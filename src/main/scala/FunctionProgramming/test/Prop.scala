@@ -2,7 +2,7 @@ package FunctionProgramming.test
 
 import java.util.Random
 
-import FunctionProgramming.state.{RNG, SimpleRng, State}
+import FunctionProgramming.state.{RNG, State}
 
 
 trait Prop {
@@ -28,13 +28,26 @@ trait Prop {
     * @author chenwu on 2019.3.18
     */
   def choose(start: Int, stopExcusive: Int): Gen[Int] = {
-    val simpleRNG = SimpleRng(47l)
-    //Gen(State(simpleRNG.nonNegativeInt(simpleRNG)._2.))
-    Gen(State(simpleRNG=>(10,simpleRNG)))
-    null
-        //Gen(State(RNG.nonNegativeInt).map(n => start + n % (stopExclusive-start)))
+
+    //answer1
+    //Gen(State(RNG.nonNegativeInt).map(n=>n%stopExcusive-start+start))
+
+    //answer2
+    Gen(State(rng=>RNG.nonNegativeInt(rng) match{
+      case (n,rng2)=>(n%(stopExcusive-start)+start,rng2)
+    }))
   }
 
+  def unit[A](f: =>A):Gen[A] = {
+      Gen(State(rng=>(f,rng)))
+  }
+
+}
+
+class SimpleProp extends Prop{
+  override def check: Boolean = {
+    true
+  }
 }
 
 case class Gen[A](sample: State[RNG, A]) {
