@@ -1,5 +1,8 @@
 package FunctionProgramming.moniod
 
+import FunctionProgramming.state.RNG.SimpleRng
+import FunctionProgramming.test.{Gen, Prop}
+
 /**
   * moniod描述了结合律和同一律
   * 结合律是op(op(x,y),z) == op(op(x,z),y)
@@ -14,7 +17,7 @@ trait Moniod[A] {
 
 }
 
-object Moniod{
+object Moniod {
 
   val StringMoniod = new Moniod[String] {
     override def op(a1: String, a2: String): String = a1 + a2
@@ -66,11 +69,22 @@ object Moniod{
     * @tparam A
     * @return
     */
-  def endoMoniod[A](a:A):Moniod[A => A] = new Moniod[A => A] {
-    /**  a1 compose a2表示 先调用a2 后调用a1**/
+  def endoMoniod[A]: Moniod[A => A] = new Moniod[A => A] {
+    /** a1 compose a2表示 先调用a2 后调用a1 **/
     override def op(a1: A => A, a2: A => A): A => A = a1 compose a2
 
-    override def zero: A => A = (a:A)=>a
+    override def zero: A => A = (a: A) => a
+  }
+
+  def monoidLaws[A](m: Moniod[A], gen: Gen[A]): Prop = new Prop {
+    override def check: Boolean = false
+
+  }
+
+  def concetenate[A](as: List[A], m: Moniod[A]): A = as.foldLeft(m.zero)(m.op)
+
+  def foldMap[A, B](as: List[A], m: Moniod[B])(f: A => B): B = {
+    as.map(f).foldLeft(m.zero)(m.op)
   }
 }
 

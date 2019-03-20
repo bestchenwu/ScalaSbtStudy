@@ -2,7 +2,7 @@ package FunctionProgramming.test
 
 import FunctionProgramming.state.RNG.SimpleRng
 import FunctionProgramming.state.{RNG, State}
-
+import FunctionProgramming.laziness.Stream
 import scala.collection.mutable.ArrayBuffer
 
 
@@ -10,9 +10,20 @@ trait Prop {
 
   def check: Boolean
 
-  def forAll[A](A: Gen[A])(f: A => Boolean): Prop = {
-    null
-  }
+  def randomStream[A](g: Gen[A])(rng: RNG): Stream[A] =
+    Stream.unfold(rng)(rng => Some(g.sample.run(rng)))
+
+//  def forAll[A](as: Gen[A])(f: A => Boolean): Prop = Prop {
+//    (n, rng) =>
+//      randomStream(as)(rng).zip(Stream.from(0)).take(n).map {
+//        case (a, i) => try {
+//          if (f(a)) Passed else Falsified(a.toString, i)
+//        } catch {
+//          case e: Exception => Falsified(buildMsg(a, e), i)
+//        }
+//      }.find(_.isFalsified).getOrElse(Passed)
+//  }
+
 
   def &&(p: Prop): Prop = new Prop {
     override def check: Boolean = {
@@ -48,7 +59,7 @@ trait Prop {
   }
 
   //todo:这个函数的作用是什么
-  def boolean: Gen[Boolean]
+  def boolean: Gen[Boolean] = null
 
   /**
     * 基于生成器g,获取长度为N的列表
@@ -78,12 +89,13 @@ object Prop {
   def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] = {
     val list = ArrayBuffer[A]()
     val simpleRng = SimpleRng(45l)
+
     def loop(n: Int, g: Gen[A]): Gen[List[A]] = {
       if (n == 0) {
         Gen(State(rng => (list.toList, rng)))
-      }else{
+      } else {
         list.append(g.sample.run(simpleRng)._1)
-        loop(n-1,g)
+        loop(n - 1, g)
       }
     }
 
