@@ -1,6 +1,9 @@
 package FunctionProgramming.test
 
+import FunctionProgramming.state.RNG.SimpleRng
 import FunctionProgramming.state.{RNG, State}
+
+import scala.collection.mutable.ArrayBuffer
 
 
 trait Prop {
@@ -14,6 +17,10 @@ trait Prop {
   def &&(p: Prop): Prop = new Prop {
     override def check: Boolean = {
       p.check == Prop.this.check
+    }
+
+    override def boolean: Gen[Boolean] = {
+      null
     }
   }
 
@@ -51,17 +58,11 @@ trait Prop {
     * @tparam A
     * @return
     */
-  def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] = {
-    val result: Gen[List[A]] = Gen(State(rng => (List(), rng)))
 
-    def loop(n: Int, g: Gen[A]): Gen[List[A]] = {
-      if (n == 0) {
-        result
-      }
-      result
-    }
 
-    result
+  //todo:这里的sequence函数意思没有明白
+  def listOfN1[A](n: Int, g: Gen[A]): Gen[List[A]] = {
+    Gen(State.sequence(List.fill(n)(g.sample)))
   }
 }
 
@@ -72,5 +73,20 @@ object Prop {
 
   def checkEither: Either[(FailedCase, SuccessCount), SuccessCount] = {
     null
+  }
+
+  def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] = {
+    val list = ArrayBuffer[A]()
+    val simpleRng = SimpleRng(45l)
+    def loop(n: Int, g: Gen[A]): Gen[List[A]] = {
+      if (n == 0) {
+        Gen(State(rng => (list.toList, rng)))
+      }else{
+        list.append(g.sample.run(simpleRng)._1)
+        loop(n-1,g)
+      }
+    }
+
+    loop(n, g)
   }
 }
