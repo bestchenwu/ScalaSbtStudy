@@ -17,7 +17,30 @@ trait Moniod[A] {
 
 }
 
+sealed trait WC
+
+case class Stub(chars: String) extends WC
+
+case class Part(lStub: String, words: Int, rStub: String) extends WC
+
 object Moniod {
+
+  val wcMonoid: Moniod[WC] = new Moniod[WC] {
+    override def op(a1: WC, a2: WC): WC = {
+      a1 match {
+        case Stub(_) => a2
+        case Part(lSub, words, rStub) => {
+          a2 match {
+            case Stub(_) => Part(lSub, words, rStub)
+            case Part(lSub2, words2, rStub2) => Part(lSub + " " + lSub2, words + words2, rStub + " " + rStub2)
+          }
+        }
+      }
+    }
+
+
+    override def zero: WC = Stub("")
+  }
 
   val StringMoniod = new Moniod[String] {
     override def op(a1: String, a2: String): String = a1 + a2
@@ -106,6 +129,41 @@ object Moniod {
       val (leftSeq, rightSeq) = v.splitAt(v.size / 2)
       m.op(foldMapV(leftSeq, m)(f), foldMapV(rightSeq, m)(f))
     }
+  }
+
+  /**
+    * 统计单词里的不包含空白的个数之和
+    *
+    * @param v
+    * @return
+    */
+  def countWords(v: String): WC = {
+
+    var emptyWc: WC = Stub("")
+
+    def loop(v: String): WC = {
+      val splitIndex = v.indexOf(" ")
+      if (-1 == splitIndex) {
+        if (v.isEmpty) {
+          wcMonoid.op(emptyWc, Stub(""))
+        } else {
+          wcMonoid.op(emptyWc, Part(v, 1, ""))
+        }
+      } else {
+        var leftWc: WC = null
+        val subStr = v.substring(0, splitIndex)
+        if (subStr.isEmpty) {
+          leftWc = Stub("")
+        } else {
+          leftWc = Part(subStr, 1, "")
+        }
+        emptyWc = wcMonoid.op(emptyWc, leftWc)
+        loop(v.substring(splitIndex + 1))
+      }
+    }
+
+    loop(v)
+
   }
 }
 
