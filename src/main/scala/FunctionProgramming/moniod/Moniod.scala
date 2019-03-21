@@ -26,18 +26,28 @@ case class Part(lStub: String, words: Int, rStub: String) extends WC
 object Moniod {
 
   val wcMonoid: Moniod[WC] = new Moniod[WC] {
-    override def op(a1: WC, a2: WC): WC = {
-      a1 match {
-        case Stub(_) => a2
-        case Part(lSub, words, rStub) => {
-          a2 match {
-            case Stub(_) => Part(lSub, words, rStub)
-            case Part(lSub2, words2, rStub2) => Part(lSub + " " + lSub2, words + words2, rStub + " " + rStub2)
-          }
-        }
-      }
-    }
 
+
+
+//    override def op(a1: WC, a2: WC): WC = {
+//      a1 match {
+//        case Stub(_) => a2
+//        case Part(lSub, words, rStub) => {
+//          a2 match {
+//            case Stub(_) => Part(lSub, words, rStub)
+//            case Part(lSub2, words2, rStub2) => Part(lSub + " " + lSub2, words + words2, rStub + " " + rStub2)
+//          }
+//        }
+//      }
+//    }
+
+
+    override def op(a1: WC, a2: WC): WC = (a1:WC,a2:WC) match{
+      case (Stub(s1),Stub(s2))=>Stub(s1+s2)
+      case (Stub(s1),Part(l,w,r))=>Part(s1+l,w,r)
+      case (Part(l,w,r),Stub(s2))=>Part(l,w,r+s2)
+      case (Part(l,w,r),Part(l1,w1,r1))=>Part(l,w+(if((r+l1).isEmpty) 0 else 1)+w1,r1)
+    }
 
     override def zero: WC = Stub("")
   }
@@ -163,7 +173,18 @@ object Moniod {
     }
 
     loop(v)
+  }
 
+  def countWordsByFoldMap(v:String):Int={
+    def wordCount(v:Char):WC={
+        if(v.isWhitespace){
+          Stub("")
+        }else{
+          Stub(v.toString)
+        }
+    }
+    print(foldMapV(v.toIndexedSeq,wcMonoid)(wordCount))
+    0
   }
 }
 
