@@ -86,6 +86,27 @@ object Moniod {
   def foldMap[A, B](as: List[A], m: Moniod[B])(f: A => B): B = {
     as.map(f).foldLeft(m.zero)(m.op)
   }
+
+  /**
+    * 并行计算
+    *
+    * @param v
+    * @param m
+    * @param f
+    * @tparam A
+    * @tparam B
+    * @return
+    */
+  def foldMapV[A, B](v: IndexedSeq[A], m: Moniod[B])(f: A => B): B = {
+    if (v.size == 2) {
+      m.op(f(v(0)), f(v(1)))
+    } else if (v.size == 1) {
+      m.op(f(v(0)), m.zero)
+    } else {
+      val (leftSeq, rightSeq) = v.splitAt(v.size / 2)
+      m.op(foldMapV(leftSeq, m)(f), foldMapV(rightSeq, m)(f))
+    }
+  }
 }
 
 
