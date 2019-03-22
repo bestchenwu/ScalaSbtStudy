@@ -175,17 +175,18 @@ object Moniod {
   }
 
   def countWordsByFoldMap(v: String): Int = {
-    def wordCount(v: Char): WC = {
-      if (v.isWhitespace) {
-        Stub("")
+    def wordCount(c: Char): WC = {
+      if (c.isWhitespace) {
+        Part("",0,"")
       } else {
-        Stub(v.toString)
+        Stub(c.toString)
       }
     }
 
     def unstub(s: String) = s.length min 1
-
-    foldMapV(v.toIndexedSeq, wcMonoid)(wordCount) match {
+    val result = foldMapV(v.toIndexedSeq, wcMonoid)(wordCount)
+    print(result)
+    result match {
       case Stub(s) => unstub(s)
       case Part(l, w, r) => unstub(l) + w + unstub(r)
     }

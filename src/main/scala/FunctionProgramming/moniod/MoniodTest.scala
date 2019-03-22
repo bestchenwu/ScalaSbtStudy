@@ -18,6 +18,6 @@ object MoniodTest {
 //    val wc3 = Moniod.wcMonoid.op(wc1,wc2)
 //    print(wc3)
     val str = " lorem haha jack   sweet"
-    print(Moniod.countWordsByFoldMap(str))
+    println(Moniod.countWordsByFoldMap(str))
   }
 }
