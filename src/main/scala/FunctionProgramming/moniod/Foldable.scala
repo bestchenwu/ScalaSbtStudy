@@ -8,7 +8,12 @@ package FunctionProgramming.moniod
   */
 trait Foldable[F[_]] {
 
-    def foldRight[A,B](as:F[A])(Z:B)(f:(A,B)=>B):B
-    def foldLeft[A,B](as:F[A])(Z:B)(f:(B,A)=>B):B
-    def foldMap[A,B](as:F[A])
+  def foldRight[A, B](as: F[A])(Z: B)(f: (A, B) => B): B
+
+  def foldLeft[A, B](as: F[A])(Z: B)(f: (B, A) => B): B
+
+  def foldMap[A, B](as: F[A])(f: A => B)(mb: Moniod[B]): B
+
+  def concatenate[A](as: F[A])(m: Moniod[A]): A = foldLeft(as)(m.zero)(m.op)
 }
+
