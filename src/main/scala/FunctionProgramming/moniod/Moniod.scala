@@ -28,19 +28,6 @@ object Moniod {
   val wcMonoid: Moniod[WC] = new Moniod[WC] {
 
 
-    //    override def op(a1: WC, a2: WC): WC = {
-    //      a1 match {
-    //        case Stub(_) => a2
-    //        case Part(lSub, words, rStub) => {
-    //          a2 match {
-    //            case Stub(_) => Part(lSub, words, rStub)
-    //            case Part(lSub2, words2, rStub2) => Part(lSub + " " + lSub2, words + words2, rStub + " " + rStub2)
-    //          }
-    //        }
-    //      }
-    //    }
-
-
     override def op(a1: WC, a2: WC): WC = (a1: WC, a2: WC) match {
       case (Stub(s1), Stub(s2)) => Stub(s1 + s2)
       case (Stub(s1), Part(l, w, r)) => Part(s1 + l, w, r)
@@ -192,6 +179,8 @@ object Moniod {
     }
 
   }
+
+  def productMoniad[A,B](A:Moniod[A],B:Moniod[B]):Moniod[(A,B)]=null
 }
 
 

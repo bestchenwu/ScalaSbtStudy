@@ -18,7 +18,7 @@ trait Foldable[F[_]] {
 
   def concatenate[A](as: F[A])(m: Moniod[A]): A = foldLeft(as)(m.zero)(m.op)
 
-
+  def toList[A](fa:F[A]):List[A] = foldMap(fa)((x:A)=>List(x))(Moniod.ListMoniod)
 }
 
 object Foldable {
@@ -60,6 +60,16 @@ object Foldable {
       }
     }
   }
+
+  val foldOption:Foldable[Option] = new Foldable[Option] {
+    override def foldRight[A, B](as: Option[A])(Z: B)(f: (A, B) => B): B = f(as.get,Z)
+
+     override def foldLeft[A, B](as: Option[A])(Z: B)(f: (B, A) => B): B = f(Z,as.get)
+
+    override def foldMap[A, B](as: Option[A])(f: A => B)(mb: Moniod[B]): B = mb.op(mb.zero,f(as.get))
+  }
+
+
 }
 
 
