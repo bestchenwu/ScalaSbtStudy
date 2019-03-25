@@ -164,13 +164,14 @@ object Moniod {
   def countWordsByFoldMap(v: String): Int = {
     def wordCount(c: Char): WC = {
       if (c.isWhitespace) {
-        Part("",0,"")
+        Part("", 0, "")
       } else {
         Stub(c.toString)
       }
     }
 
     def unstub(s: String) = s.length min 1
+
     val result = foldMapV(v.toIndexedSeq, wcMonoid)(wordCount)
     print(result)
     result match {
@@ -180,7 +181,19 @@ object Moniod {
 
   }
 
-  def productMoniad[A,B](A:Moniod[A],B:Moniod[B]):Moniod[(A,B)]=null
+  def productMoniad[A, B](a: Moniod[A], b: Moniod[B]): Moniod[(A, B)] = new Moniod[(A, B)] {
+    override def op(a1: (A, B), a2: (A, B)): (A, B) = (a.op(a1._1, a2._1), b.op(a1._2, a2._2))
+
+    override def zero: (A, B) = (a.zero, b.zero)
+  }
+
+  def mapMergeMonoid[K,V](v:Moniod[V]):Moniod[Map[K,V]]=new Moniod[Map[K, V]] {
+    override def op(a1: Map[K, V], a2: Map[K, V]) = (a1.keySet++a2.keySet).foldLeft(zero){
+      (acc,k)=>acc.updated(k,v.op(a1.getOrElse(k,v.zero),a2.getOrElse(k,v.zero)))
+    }
+
+    override def zero = Map[K, V]()
+  }
 }
 
 
