@@ -187,13 +187,33 @@ object Moniod {
     override def zero: (A, B) = (a.zero, b.zero)
   }
 
-  def mapMergeMonoid[K,V](v:Moniod[V]):Moniod[Map[K,V]]=new Moniod[Map[K, V]] {
-    override def op(a1: Map[K, V], a2: Map[K, V]) = (a1.keySet++a2.keySet).foldLeft(zero){
-      (acc,k)=>acc.updated(k,v.op(a1.getOrElse(k,v.zero),a2.getOrElse(k,v.zero)))
+    def mapMergeMonoid[K,V](v:Moniod[V]):Moniod[Map[K,V]]=new Moniod[Map[K, V]] {
+      override def op(a1: Map[K, V], a2: Map[K, V]) = (a1.keySet++a2.keySet).foldLeft(zero){
+        (acc,k)=>acc.updated(k,v.op(a1.getOrElse(k,v.zero),a2.getOrElse(k,v.zero)))
+      }
+      override def zero = Map[K, V]()
     }
 
-    override def zero = Map[K, V]()
-  }
+    def functionMoniod[A,B](B:Moniod[B]):Moniod[A=>B]=new Moniod[A => B] {
+      override def op(a1: A => B, a2: A => B): A => B = (x:A,y:A)=>B.op(a1(x),a2(y))
+
+      override def zero: A => B = ???
+    }
+
+
+//  def mapMergeMonoid[K, V](V: Moniod[V]): Moniod[Map[K, V]] =
+//    new Moniod[Map[K, V]] {
+//      def zero = Map[K, V]()
+//
+//      def op(a: Map[K, V], b: Map[K, V]) =
+//        (a.keySet ++ b.keySet).foldLeft(zero) { (acc, k) =>
+//          acc.updated(k, V.op(a.getOrElse(k, V.zero),
+//            b.getOrElse(k, V.zero)))
+//        }
+//    }
+
+
+
 }
 
 
