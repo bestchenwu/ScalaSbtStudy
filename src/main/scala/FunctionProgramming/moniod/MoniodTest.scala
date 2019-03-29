@@ -17,7 +17,10 @@ object MoniodTest {
 //    val wc2 = Part("lor",2,"")
 //    val wc3 = Moniod.wcMonoid.op(wc1,wc2)
 //    print(wc3)
-    val str = " lorem haha jack   sweet"
-    println(Moniod.countWordsByFoldMap(str))
+//    val str = " lorem haha jack   sweet"
+//    println(Moniod.countWordsByFoldMap(str))
+
+    val vector = Vector("a","rose","is","a","rose")
+    println(Moniod.bag(vector))
   }
 }
