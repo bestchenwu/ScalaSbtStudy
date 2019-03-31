@@ -27,16 +27,23 @@ trait Functor[F[_]] {
   def map2[A, B, C](fa: Option[A], fb: Option[B])(f: (A, B) => C): Option[C] = fa.flatMap(a => fb.map(b => f(a, b)))
 }
 
-trait Monoad[F[_]] extends Functor[F]{
+trait Monoad[F[_]] extends Functor[F] {
 
-  def unit[A](a: =>A):F[A]
-  def flatMap[A,B](ma:F[A])(f:A=>F[B]):F[B]
-  def map[A, B](fa: F[A])(f: A => B): F[B] = flatMap(fa)(a=>unit(f(a)))
-  def map2[A,B,C](ma:F[A],mb:F[B])(f:(A,B)=>C):F[C] = flatMap(ma)(a=>map(mb)(b=>f(a,b)))
+  def unit[A](a: => A): F[A]
+
+  def flatMap[A, B](ma: F[A])(f: A => F[B]): F[B]
+
+  def map[A, B](fa: F[A])(f: A => B): F[B] = flatMap(fa)(a => unit(f(a)))
+
+  def map2[A, B, C](ma: F[A], mb: F[B])(f: (A, B) => C): F[C] = flatMap(ma)(a => map(mb)(b => f(a, b)))
 
   val listFunctor = new Functor[List] {
     override def map[A, B](fa: List[A])(f: A => B): List[B] = fa map f
   }
+
+  //def sequence[A](lma:List[F[A]]):F[List[A]] = unit(List[A]())
+
+  def sequence[A](lma: List[F[A]]): F[List[A]] = lma.foldRight(unit(List[A]()))((lmb,a)=>map2(lmb,a)(_ :: _))
 
 }
 
@@ -44,10 +51,10 @@ object Monoad {
   val genMonad = new Monoad[Gen] {
     override def unit[A](a: => A): Gen[A] = Gen.unit(a)
 
-    override def flatMap[A, B](ma: Gen[A])(f: A => Gen[B]): Gen[B] = ma flatMap(f)
+    override def flatMap[A, B](ma: Gen[A])(f: A => Gen[B]): Gen[B] = ma flatMap (f)
   }
 
-  val ParMonad = new Monoad[Par]{
+  val ParMonad = new Monoad[Par] {
 
     val es = Executors.newFixedThreadPool(1)
 
@@ -73,5 +80,6 @@ object Monoad {
 
     override def flatMap[A, B](ma: List[A])(f: A => List[B]): List[B] = ma.flatMap(f)
   }
+
 
 }
