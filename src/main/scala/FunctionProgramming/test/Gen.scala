@@ -8,6 +8,10 @@ case class Gen[+A](sample: State[RNG, A]) {
 
   //val double:Gen[Double]=Gen(State(rng=>RNG.randomDouble(rng)))
 
+  def map[B](f :A=>B):Gen[B] = {
+    Gen(sample.map(f))
+  }
+
   def flatMap[B](f: A => Gen[B]): Gen[B] = {
     Gen(sample.flatMap(a => f(a).sample))
   }
@@ -25,5 +29,9 @@ case class Gen[+A](sample: State[RNG, A]) {
   }
 
 
+}
+object  Gen{
+
+  def unit[A](a: => A): Gen[A] = Gen(State.unit(a))
 }
 

@@ -3,7 +3,7 @@ package FunctionProgramming.parallelism
 import java.util.concurrent._
 import language.implicitConversions
 
-trait Par[A] {
+object Par {
 
   /**
     * 定义一个转换算子(接受一个ExecutorService,并返回一个Future)
@@ -212,11 +212,5 @@ trait Par[A] {
   }
 }
 
-case class ParImpl[A](es: ExecutorService) extends Par[A]
+//case class ParImpl[A](es: ExecutorService) extends Par[A]
 
-object Par {
-  def main(args: Array[String]): Unit = {
-    //s
-    //println(parSome.sum(IndexedSeq(1,2,3,4)))
-  }
-}

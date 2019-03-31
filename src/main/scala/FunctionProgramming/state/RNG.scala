@@ -140,8 +140,7 @@ case class State[S, +A](run: S => (A, S)) {
 
   } yield ()
 
-  def unit[S, A](a: A): State[S, A] =
-    State(s => (a, s))
+
 
 
 }
@@ -149,6 +148,9 @@ case class State[S, +A](run: S => (A, S)) {
 object State {
 
   type RAND[A] = State[RNG, A]
+
+  def unit[S, A](a: A): State[S, A] =
+    State(s => (a, s))
 
   def sequence[S, A](sas: List[State[S, A]]): State[S, List[A]] = {
     def go(s: S, actions: List[State[S,A]], acc: List[A]): (List[A],S) =
