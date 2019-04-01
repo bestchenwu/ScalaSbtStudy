@@ -29,9 +29,12 @@ case class Gen[+A](sample: State[RNG, A]) {
   }
 
 
+
 }
 object  Gen{
 
-  def unit[A](a: => A): Gen[A] = Gen(State.unit(a))
+  def unit[A](a: => A): Gen[A] =
+    Gen(State.unit(a))
+
 }
 

@@ -1,6 +1,6 @@
 package FunctionProgramming.state
 
-import FunctionProgramming.state.State.RAND
+import FunctionProgramming.state.State.{RAND, unit}
 
 
 /**
@@ -115,20 +115,23 @@ object RNG {
   }
 
   def boolean(rng: RNG): (Boolean, RNG) =
-    rng.nextInt match { case (i,rng2) => (i%2==0,rng2) }
+    rng.nextInt match {
+      case (i, rng2) => (i % 2 == 0, rng2)
+    }
 
 }
 
 case class State[S, +A](run: S => (A, S)) {
 
   def map[B](f: A => B): State[S, B] = {
-      flatMap(a=>unit(f(a)))
+    flatMap(a => unit(f(a)))
   }
 
   def flatMap[B](f: A => State[S, B]): State[S, B] = State(s => {
     val (a, s1) = run(s)
     f(a).run(s1)
   })
+
 
   def get[S]: State[S, S] = State(s => (s, s))
 
@@ -139,10 +142,6 @@ case class State[S, +A](run: S => (A, S)) {
     _ <- set(f(s))
 
   } yield ()
-
-
-
-
 }
 
 object State {
@@ -153,12 +152,15 @@ object State {
     State(s => (a, s))
 
   def sequence[S, A](sas: List[State[S, A]]): State[S, List[A]] = {
-    def go(s: S, actions: List[State[S,A]], acc: List[A]): (List[A],S) =
+    def go(s: S, actions: List[State[S, A]], acc: List[A]): (List[A], S) =
       actions match {
-        case Nil => (acc.reverse,s)
-        case h :: t => h.run(s) match { case (a,s2) => go(s2, t, a :: acc) }
+        case Nil => (acc.reverse, s)
+        case h :: t => h.run(s) match {
+          case (a, s2) => go(s2, t, a :: acc)
+        }
       }
-    State((s: S) => go(s,sas,List()))
+
+    State((s: S) => go(s, sas, List()))
   }
 
 

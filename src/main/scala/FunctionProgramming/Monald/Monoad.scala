@@ -45,6 +45,8 @@ trait Monoad[F[_]] extends Functor[F] {
 
   def sequence[A](lma: List[F[A]]): F[List[A]] = lma.foldRight(unit(List[A]()))((lmb,a)=>map2(lmb,a)(_ :: _))
 
+  def traverse[A,B](lma:List[A])(f:A=>F[B]):F[List[B]] = sequence(lma.map(f))
+
 }
 
 object Monoad {
@@ -64,19 +66,19 @@ object Monoad {
   }
 
   val OptionMonad = new Monoad[Option] {
-    override def unit[A](a: => A): Option[A] = Option(a())
+    override def unit[A](a: => A): Option[A] = Some(a)
 
     override def flatMap[A, B](ma: Option[A])(f: A => Option[B]): Option[B] = ma.flatMap(f)
   }
 
   val StreamMonad = new Monoad[Stream] {
-    override def unit[A](a: => A): Stream[A] = Stream(a())
+    override def unit[A](a: => A): Stream[A] = Stream(a)
 
     override def flatMap[A, B](ma: Stream[A])(f: A => Stream[B]): Stream[B] = ma.flatMap(f)
   }
 
   val ListMonad = new Monoad[List] {
-    override def unit[A](a: => A): List[A] = List(a())
+    override def unit[A](a: => A): List[A] = List(a)
 
     override def flatMap[A, B](ma: List[A])(f: A => List[B]): List[B] = ma.flatMap(f)
   }
