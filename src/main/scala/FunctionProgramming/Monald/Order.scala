@@ -9,10 +9,15 @@ case class Item(name: String, price: Double)
 
 object Order {
   def main(args: Array[String]): Unit = {
-    val genOrder: Gen[Order] = for {
+    val genItem:Gen[Item] = for{
       name <- Gen.stringN(3)
       price <- Gen.uniform.map(_ * 10)
+    } yield Item(name,price)
+    val genOrder: Gen[Order] = for {
+      item<-genItem
       quantity <- Gen.choose(0, 100)
-    } yield Order(Item(name, price), quantity)
+    } yield Order(item, quantity)
+    val item = genItem
+    item.
   }
 }
