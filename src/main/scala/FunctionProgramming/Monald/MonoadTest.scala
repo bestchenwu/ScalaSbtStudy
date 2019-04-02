@@ -14,11 +14,13 @@ object MonoadTest {
     //    val result2 = Monoad.OptionMonad.sequence(list1)
     //输出Some(List(1,2,3))
     //println(result2)
-    val result3 = Monoad.OptionMonad.traverse(List("1", "a", "3"))((x: String) => try {
-      Some(x.toInt)
-    } catch {
-      case e:Exception => Some(e.getMessage)
-    })
-    print(result3)
+    //    val result3 = Monoad.OptionMonad.traverse(List("1", "a", "3"))((x: String) => try {
+    //      Some(x.toInt)
+    //    } catch {
+    //      case e:Exception => Some(e.getMessage)
+    //    })
+    //    print(result3)
+    val list = Monoad.OptionMonad.replicateM(3, Some(3))
+    print(list)
   }
 }

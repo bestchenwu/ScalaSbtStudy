@@ -43,10 +43,11 @@ trait Monoad[F[_]] extends Functor[F] {
 
   //def sequence[A](lma:List[F[A]]):F[List[A]] = unit(List[A]())
 
-  def sequence[A](lma: List[F[A]]): F[List[A]] = lma.foldRight(unit(List[A]()))((lmb,a)=>map2(lmb,a)(_ :: _))
+  def sequence[A](lma: List[F[A]]): F[List[A]] = lma.foldRight(unit(List[A]()))((lmb, a) => map2(lmb, a)(_ :: _))
 
-  def traverse[A,B](lma:List[A])(f:A=>F[B]):F[List[B]] = sequence(lma.map(f))
+  def traverse[A, B](lma: List[A])(f: A => F[B]): F[List[B]] = sequence(lma.map(f))
 
+  def replicateM[A](n: Int, ma: F[A]): F[List[A]] = sequence(List.fill(n)(ma))
 }
 
 object Monoad {

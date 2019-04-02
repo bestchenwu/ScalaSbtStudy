@@ -75,7 +75,7 @@ object RNG {
   type RAND[+A] = RNG => (A, RNG) //组合子
 
   val rand_int: RAND[Int] = _.nextInt
-
+  val rand_double :RAND[Double] = map(nonNegativeInt)(_ / (Int.MaxValue.toDouble + 1))
   def unit[A](a: A): RAND[A] = rng => (a, rng)
 
   def map[A, B](s: RAND[A])(f: A => B): RAND[B] = rng => {
