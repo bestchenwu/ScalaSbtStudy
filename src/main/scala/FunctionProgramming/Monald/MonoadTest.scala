@@ -20,7 +20,10 @@ object MonoadTest {
     //      case e:Exception => Some(e.getMessage)
     //    })
     //    print(result3)
-    val list = Monoad.OptionMonad.replicateM(3, Some(3))
-    print(list)
+    //    val list = Monoad.OptionMonad.replicateM(3, Some(3))
+    //    print(list)
+
+    val result = Monoad.OptionMonad.compose((x: Int) => Some(x.toDouble / 3), (y: Double) => Some(y.toString))
+    print(result(5))
   }
 }

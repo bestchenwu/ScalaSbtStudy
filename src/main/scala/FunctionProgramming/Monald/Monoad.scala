@@ -48,6 +48,8 @@ trait Monoad[F[_]] extends Functor[F] {
   def traverse[A, B](lma: List[A])(f: A => F[B]): F[List[B]] = sequence(lma.map(f))
 
   def replicateM[A](n: Int, ma: F[A]): F[List[A]] = sequence(List.fill(n)(ma))
+
+  def compose[A, B, C](f: A => F[B], g: B => F[C]): A => F[C] = (a: A) => flatMap(f(a))(g)
 }
 
 object Monoad {
