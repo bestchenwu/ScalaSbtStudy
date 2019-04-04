@@ -17,8 +17,12 @@ object ApplicativeTest {
 
     //    val result  = applicative.sequence(List(Some(1),Some("aa")))
     //val result = applicative.replicateM(3, Some("abc"))
-    val result = applicative.product(Some("abc"),Some("123"))
+    //val result = applicative.product(Some("abc"),Some("123"))
+    //val result =applicative.map3(Some(1),Some(3),Some(5))(_+_+_)
+    val result = applicative.map4(Some(1),Some(3),Some(5),Some(9))(_+_+_+_)
     print(result)
+
+
 
   }
 }
