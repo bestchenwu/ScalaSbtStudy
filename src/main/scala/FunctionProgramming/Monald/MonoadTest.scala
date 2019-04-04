@@ -23,7 +23,13 @@ object MonoadTest {
     //    val list = Monoad.OptionMonad.replicateM(3, Some(3))
     //    print(list)
 
-    val result = Monoad.OptionMonad.compose((x: Int) => Some(x.toDouble / 3), (y: Double) => Some(y.toString))
-    print(result(5))
+    //    val result = Monoad.OptionMonad.compose((x: Int) => Some(x.toDouble / 3), (y: Double) => Some(y.toString))
+    //    print(result(5))
+
+    val id = Id(111)
+    //      val newId = Id.mapId(id)(_*2)
+    //
+    val newId = Id.flatMapId(id)((x: Int) => Id(x * 3))
+    print(newId)
   }
 }

@@ -5,9 +5,10 @@ package FunctionProgramming.Monald
 import java.util.concurrent.Executors
 
 import FunctionProgramming.parallelism.Par.Par
-import FunctionProgramming.parallelism.{Par}
+import FunctionProgramming.parallelism.Par
 import FunctionProgramming.test.Gen
 import FunctionProgramming.laziness.Stream
+import FunctionProgramming.state.State
 
 
 trait Functor[F[_]] {
@@ -50,6 +51,12 @@ trait Monoad[F[_]] extends Functor[F] {
   def replicateM[A](n: Int, ma: F[A]): F[List[A]] = sequence(List.fill(n)(ma))
 
   def compose[A, B, C](f: A => F[B], g: B => F[C]): A => F[C] = (a: A) => flatMap(f(a))(g)
+
+  def join[A](ma: F[F[A]]): F[A] = flatMap(ma)(ma => ma)
+
+  def flatMapViaJoin[A, B](ma: F[A])(f: A => F[B]) = join(map(ma)(f))
+
+  //def composeViaJoin[A, B, C](f: A => F[B], g: B => F[C]): A => F[C] =(a:A)=>map(f(a))
 }
 
 object Monoad {
@@ -86,5 +93,43 @@ object Monoad {
     override def flatMap[A, B](ma: List[A])(f: A => List[B]): List[B] = ma.flatMap(f)
   }
 
+  val IdMonad = new Monoad[Id] {
+    override def unit[A](a: => A): Id[A] = Id(a)
 
+    override def flatMap[A, B](ma: Id[A])(f: A => Id[B]): Id[B] = Id.flatMapId(ma)(f)
+  }
+
+  /**
+    * State的定义是State[S,A](run:S=>(A,S))
+    * 所以固定住第一个参数S,表示只关注第二个参数A即可。
+    * S一直是Int类型
+    *
+    * @tparam A
+    * @author chenwu on 2019.4.4
+    */
+  //  type IntState[A] = State[Int, A]
+  //
+  //  object IntStateMonad extends Monoad[IntState] {
+  //    override def unit[A](a: => A): IntState[A] = State(s => (a, s))
+  //
+  //    override def flatMap[A, B](ma: IntState[A])(f: A => IntState[B]): IntState[B] = ma.flatMap(f)
+  //  }
+  //像这样首先声明一个类型,再使用# 表示这是一个类型lambda
+  object IntStateMonad2 extends Monoad[({type IntState[A] = State[Int, A]})#IntState] {
+    override def unit[A](a: => A): State[Int, A] = State(s => (a, s))
+
+    override def flatMap[A, B](ma: State[Int, A])(f: A => State[Int, B]): State[Int, B] = ma.flatMap(f)
+  }
+
+}
+
+//
+//object IntSt
+case class Id[A](value: A) {
+}
+
+object Id {
+  def flatMapId[A, B](ma: Id[A])(f: A => Id[B]): Id[B] = f(ma.value)
+
+  def mapId[A, B](fa: Id[A])(f: A => B): Id[B] = Id(f(fa.value))
 }
