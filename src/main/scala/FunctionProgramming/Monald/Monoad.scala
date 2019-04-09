@@ -57,6 +57,8 @@ trait Monoad[F[_]] extends Functor[F] {
   def flatMapViaJoin[A, B](ma: F[A])(f: A => F[B]) = join(map(ma)(f))
 
   //def composeViaJoin[A, B, C](f: A => F[B], g: B => F[C]): A => F[C] =(a:A)=>map(f(a))
+
+
 }
 
 object Monoad {

@@ -50,4 +50,9 @@ object IO extends Monoad[IO] {
     d <- ReadLine.map(_.toDouble)
     _ <- PrintLine(fahrenToCelsius(d).toString)
   } yield ()
+
+  def forever[A, B](a: IO[A]): IO[B] = {
+    lazy val t: IO[B] = forever(a)
+    a flatMap (_ => t)
+  }
 }

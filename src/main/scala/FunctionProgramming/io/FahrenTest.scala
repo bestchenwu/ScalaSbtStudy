@@ -12,6 +12,7 @@ object FahrenTest {
 
   def main(args: Array[String]): Unit = {
     //converter
-    IO.ReadLine.map(_.toDouble)
+    //IO.ReadLine.map(_.toDouble)
+    val p = IO.forever(IO.PrintLine("still going"))
   }
 }
