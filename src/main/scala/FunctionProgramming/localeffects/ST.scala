@@ -93,7 +93,7 @@ sealed abstract class STArray[S, A: Manifest] {
     }
   }
 
-  def swap[S](i: Int, j: Int): ST[S, Unit] = for {
+  def swap(i: Int, j: Int): ST[S, Unit] = for {
     x <- read(i)
     y <- read(j)
     _ <- write(i, y)
