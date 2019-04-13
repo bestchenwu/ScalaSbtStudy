@@ -35,7 +35,31 @@ sealed trait Process[I, O] {
     go(this)
   }
 
+  def |>[O2](p2: Process[O, O2]): Process[I, O2] = {
+    p2 match {
+      case Halt() => Halt()
+      case Emit(h, t) => Emit(h, this |> t)
+      case Await(f) => this match {
+        case Emit(h, t) => t |> f(Some(h))
+        case Halt() => Halt() |> f(None)
+        case Await(g) => Await((i: Option[I]) => g(i) |> p2)
+      }
+    }
+  }
 
+
+  def map[O2](f: O => O2): Process[I, O2] = this |> lift(f)
+
+
+  def lift[I, O](f: I => O): Process[I, O] =
+    Process.liftOne(f).repeated
+
+
+  def ++(p: => Process[I, O]): Process[I, O] = this match {
+    case Halt() => p
+    case Emit(h, t) => Emit(h, t ++ p)
+    case Await(recv) => Await(recv andThen (_ ++ p))
+  }
 }
 
 object Process {
@@ -81,7 +105,36 @@ object Process {
     loop(n)
   }
 
- // def takeWhile[I]()
+  def takeWhile[I](f: I => Boolean): Process[I, I] = Await[I, I] {
+    case Some(i) if f(i) => Emit(i)
+    case _ => Halt()
+  }.repeated
+
+  def dropWhile[I](f: I => Boolean): Process[I, I] = Await[I, I] {
+    case Some(i) if f(i) => Halt()
+    case Some(i) if !f(i) => Emit(i)
+    case _ => Halt()
+  }.repeated
+
+  def count[I]: Process[I, Int] = {
+    def loop(n: Int): Process[I, Int] = Await[I, Int] {
+      case Some(_) => Emit(n, loop(n + 1))
+      case _ => Halt()
+    }
+
+    loop(0)
+  }
+
+  def mean: Process[Double, Double] = {
+    def loop(n: Int = 1, sum: Double = 0.0): Process[Double, Double] = Await[Double, Double] {
+      case Some(doubleItem) => Emit((sum + doubleItem) / n, loop(n + 1, sum + doubleItem))
+      case _ => Halt()
+    }
+
+    loop()
+  }
+
+
 }
 
 /**
