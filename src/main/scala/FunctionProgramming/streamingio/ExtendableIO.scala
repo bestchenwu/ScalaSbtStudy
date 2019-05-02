@@ -1,16 +1,16 @@
 package FunctionProgramming.streamingio
 
-import FunctionProgramming.streamingio.ExtendableIO.{Emit, ExtendableEmit, ExtendableHalt}
+//import FunctionProgramming.streamingio.ExtendableIO.{Emit, ExtendableEmit, ExtendableHalt}
 
 import scala.util.Try
 
 trait ExtendableIO[F[_], O] {
 
-  def onHalt[F[_], O](f: Throwable => ExtendableIO[F, O]): ExtendableIO[F, O] = this match {
-    case ExtendableHalt(e) => f(e)
-    case ExtendableEmit(h,t)=>ExtendableEmit(h,t.onHalt(f))
-      
-  }
+//  def onHalt[F[_], O](f: Throwable => ExtendableIO[F, O]): ExtendableIO[F, O] = this match {
+//    case ExtendableHalt(e) => f(e)
+//    case ExtendableEmit(h,t)=>ExtendableEmit(h,t.onHalt(f))
+//
+//  }
 }
 
 object ExtendableIO {
