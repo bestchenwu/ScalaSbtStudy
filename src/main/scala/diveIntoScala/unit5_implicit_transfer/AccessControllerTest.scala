@@ -33,6 +33,8 @@ object AccessControllerTest {
     //    AccessController.doPrivileged(() => println("run function"))
     import FileWrapper._
     val scalaFile = new JFile("/data/problem")
+    //这里使用了FileWrapper.wrapAsScalaFile方法将java.io.File转换成了FileWrapper
+    //从而在之后可以调用FileWrapper的\方法
     val file1 = scalaFile \ "7.9.txt"
     println(file1.getFileLength())
     val file2 = scalaFile \ "7.4.txt"

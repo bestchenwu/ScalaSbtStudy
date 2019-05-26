@@ -30,7 +30,7 @@ class Matrix(val array: Array[Array[Double]]) {
     */
   def columnByIndex(index: Int): Array[Double] = {
     val buffer = ArrayBuffer[Double]()
-    array.foldRight(buffer)((rowArray, buffer) => {
+    array.foldLeft(buffer)((buffer,rowArray) => {
       buffer.append(rowArray(index))
       buffer
     })
