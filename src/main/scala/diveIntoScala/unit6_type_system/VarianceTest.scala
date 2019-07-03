@@ -1,5 +1,5 @@
 package diveIntoScala.unit6_type_system
-
+import scala.{List=>ScalaList}
 /**
   * 型变分为不变、协变、逆变
   *
@@ -68,5 +68,9 @@ object VarianceTest {
     val list = ExistedTypeTest.makeList()
     //但是不可以向list里面添加元素,除非scala确定添加的元素类型和list的类型是同一种
     //list.add("haha")
+    //这里接受Int或者Int的超类
+    def foo(x:ScalaList[_ >:Int]) = x
+    //这里把字符串类型强制转换为Any再传入进来
+    println(foo(ScalaList("hi")))
   }
 }
