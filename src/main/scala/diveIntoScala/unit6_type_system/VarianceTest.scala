@@ -49,18 +49,24 @@ object VarianceTest {
     //    println(foo(333))
     //    println(bar("test2"))
 
-    //    val x = new Function[String, Any] {}
-    //    val x1 = new Function1[String, String] {}
-    //    val y1: Function1[String, Any] = x1
+    //        val x = new Function[String, Any] {}
+    //        val x1 = new Function1[String, String] {}
+    //        val y1: Function1[String, Any] = x1
     //val x1:Function[Any,String] = x
 
-    val strings = new EmptyList[String]
-    val ints = new EmptyList[Int]
-    val anys = new EmptyList[Any]
-    val anyrefs = new EmptyList[AnyRef]
-    //这里编译器做了类型推断,将Any作为最终的类型
-    println(strings ++ ints)
-    println(strings ++ anys)
-    println(strings ++ anyrefs)
+    //    val strings = new EmptyList[String]
+    //    val ints = new EmptyList[Int]
+    //    val anys = new EmptyList[Any]
+    //    val anyrefs = new EmptyList[AnyRef]
+    //    //这里编译器做了类型推断,将Any作为最终的类型
+    //    println(strings ++ ints)
+    //    println(strings ++ anys)
+    //    println(strings ++ anyrefs)
+    //这里的list类型是util.List[_]
+    //scala在这里用一个存在类型_ 来用于与java的泛型兼容
+
+    val list = ExistedTypeTest.makeList()
+    //但是不可以向list里面添加元素,除非scala确定添加的元素类型和list的类型是同一种
+    //list.add("haha")
   }
 }
