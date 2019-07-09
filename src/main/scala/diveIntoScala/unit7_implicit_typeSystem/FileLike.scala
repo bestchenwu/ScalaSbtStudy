@@ -32,6 +32,8 @@ trait FileLike[T <: FileLike[T]] {
   def content: InputStream
 
   def writeContent(otherContent: InputStream): Boolean
+
+  def getPath:String
 }
 
 object SyncUtil {

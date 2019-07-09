@@ -18,6 +18,8 @@ class LocalFileLike(var fileName: String) extends FileLike[LocalFileLike] {
   override def isDirectory: Boolean = localFile.isDirectory
 
 
+  override def getPath: String = localFile.getAbsolutePath
+
   override def touch(): Unit = localFile.createNewFile()
 
   /**
@@ -34,7 +36,8 @@ class LocalFileLike(var fileName: String) extends FileLike[LocalFileLike] {
     * @return
     */
   override def child(name: String): LocalFileLike = {
-    val file = children.find(localFileLike => localFileLike.fileName.equals(name)).getOrElse(new LocalFileLike(name))
+    val file0 = children.find(localFileLike => localFileLike.fileName.equals(name))
+    val file = file0 getOrElse(new LocalFileLike(getPath+File.separator+name))
     if (!file.exists) {
       file.touch()
     }
