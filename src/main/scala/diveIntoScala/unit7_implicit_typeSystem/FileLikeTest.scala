@@ -27,7 +27,11 @@ class LocalFileLike(var fileName: String) extends FileLike[LocalFileLike] {
     *
     * @return
     */
-  override def children: Seq[LocalFileLike] = localFile.listFiles().map(file => new LocalFileLike(file.getName))
+  override def children: Seq[LocalFileLike] = {
+    val fileList = localFile.listFiles()
+    val fileLikeList = fileList map(file => new LocalFileLike(getPath+File.separator+file.getName))
+    fileLikeList
+  }
 
   /**
     * child用于获取子目录

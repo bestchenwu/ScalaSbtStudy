@@ -69,8 +69,6 @@ object SyncUtil {
         val file2 = file getOrElse file0
         if (file1.isDirectory) {
           file2.mkdirs()
-        } else {
-          file2.touch()
         }
         //todo:故意写一个错误的类型
         //def sync(from: FileLike, to: FileLike) 在这种声明下可以编译通过
