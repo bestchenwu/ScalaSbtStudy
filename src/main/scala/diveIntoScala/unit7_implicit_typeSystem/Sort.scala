@@ -19,3 +19,16 @@ object SortUtil {
     sorter.sort(col)
   }
 }
+
+/**
+  * 以下例子实现了条件执行
+  *
+  * @tparam Up
+  */
+sealed trait TBool[Up]{
+
+  type If[TrueType<:Up,FalseType<:Up,UP] <:Up
+}
+class TTrue[Up] extends TBool[Up]{
+  override type If[TrueType<:Up,FalseType<:Up,UP] = TrueType
+}
