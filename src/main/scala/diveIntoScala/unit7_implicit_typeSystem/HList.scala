@@ -2,6 +2,9 @@ package diveIntoScala.unit7_implicit_typeSystem
 
 sealed trait HList {
 
+  def :::(after:HList):HList={
+    HCons(this,after)
+  }
 
 }
 
