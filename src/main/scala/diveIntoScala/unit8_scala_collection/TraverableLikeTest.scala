@@ -13,5 +13,6 @@ object TraverableLikeTest {
         val seq1 = Seq(1,2,34,5)
         val seq2 = Seq(5,6,7,5)
         println(seq1.diff(seq2))
+        val map = Map("a"->1,"b"->"2")
   }
 }
