@@ -10,9 +10,11 @@ object TraverableLikeTest {
 //        println(iter1.next())
 //      }
 //      val set = Set(12,3,4,5,6,7)
-        val seq1 = Seq(1,2,34,5)
-        val seq2 = Seq(5,6,7,5)
-        println(seq1.diff(seq2))
-        val map = Map("a"->1,"b"->"2")
+//        val seq1 = Seq(1,2,34,5)
+//        val seq2 = Seq(5,6,7,5)
+//        println(seq1.diff(seq2))
+        val map = Map[String,Any]()
+        val map1 = map.updated("a",1)
+
   }
 }
