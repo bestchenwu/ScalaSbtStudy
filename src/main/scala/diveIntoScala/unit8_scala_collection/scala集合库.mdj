@@ -2493,8 +2493,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": 120,
-									"top": 80,
+									"left": 72,
+									"top": -72,
 									"width": 10,
 									"height": 10
 								},
@@ -2509,8 +2509,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": 120,
-									"top": 80,
+									"left": 72,
+									"top": -72,
 									"width": 10,
 									"height": 10
 								}
@@ -10721,6 +10721,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
+									"left": -64,
+									"top": -8,
 									"width": 10,
 									"height": 10
 								},
@@ -10735,6 +10737,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
+									"left": -64,
+									"top": -8,
 									"width": 10,
 									"height": 10
 								}
@@ -14966,7 +14970,7 @@
 							"font": "Arial;13;0",
 							"left": 328,
 							"top": 976,
-							"width": 438.92022705078125,
+							"width": 439,
 							"height": 40,
 							"text": "前缀树就是根节点为null的二叉树,左分支的路径都是0,右分支的路径都是1"
 						},

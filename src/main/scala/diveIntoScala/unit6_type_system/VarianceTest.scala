@@ -65,7 +65,6 @@ object VarianceTest {
     //这里的list类型是util.List[_]
     //scala在这里用一个存在类型_ 来用于与java的泛型兼容
 
-//    val list = ExistedTypeTest.makeList()
 //    //但是不可以向list里面添加元素,除非scala确定添加的元素类型和list的类型是同一种
 //    //list.add("haha")
 //    //这里接受Int或者Int的超类

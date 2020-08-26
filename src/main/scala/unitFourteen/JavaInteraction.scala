@@ -20,7 +20,6 @@ object JavaInteraction extends App{
       }
 //
 //      //以下是从scala的类转换成java类
-//      val sum1 = CollectionUtil.countSum(seqAsJavaList(Seq(3,3,5)))
 //      println("sum1="+sum1)
 //以下是从java里的类转换成scala类
 //  def nums = {
