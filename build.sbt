@@ -6,7 +6,7 @@ libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.5.17"
 
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.14.0"
 
-libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.5.17" % "test"
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.5.17"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2"
 
