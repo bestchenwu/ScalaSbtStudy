@@ -10,6 +10,16 @@ class RecieverActor extends Actor {
 
   override def receive: Receive = {
 
+    case ReverseRequest(value) => {
+      if (value.isInstanceOf[String]) {
+        println(s"reverse value:$value")
+        sender() ! value.asInstanceOf[String].reverse
+      }else{
+        sender() ! Failure(new IllegalArgumentException("unkown message:" + value))
+      }
+
+    }
+
     case SetRequest(key, value) => {
       println(s"recivied {$key}->{$value}")
       map += ((key, value))
@@ -20,7 +30,7 @@ class RecieverActor extends Actor {
       val value = map.get(key)
       value match {
         case Some(x) => sender() ! x
-        case None => sender() ! Failure(KeyNotFoundException(key+" not found"))
+        case None => sender() ! Failure(KeyNotFoundException(key + " not found"))
       }
     }
     case other => Failure(new IllegalArgumentException("unkown message:" + other))

@@ -18,6 +18,13 @@ package object unit1_firstOneDemo {
   case class SetRequest(key:String,value:Object)
 
   /**
+    * 反转字符串
+    *
+    * @param value
+    */
+  case class ReverseRequest(value:Any)
+
+  /**
     * 抛出找不到key的存在
     *
     * @param key

@@ -2,7 +2,7 @@ package akkaStudy.unit2_actor_parallize
 
 import akka.actor.ActorSystem
 import akka.util.Timeout
-import akkaStudy.unit1_firstOneDemo.{GetRequest, SetRequest}
+import akkaStudy.unit1_firstOneDemo.{GetRequest, ReverseRequest, SetRequest}
 import com.typesafe.config.ConfigFactory
 import akka.pattern._
 
@@ -25,5 +25,9 @@ class RecieverClient(remoteAddress:String) {
 
     def get(key:String) = {
         remoteDb ? GetRequest(key)
+    }
+
+    def reverse(value:Any) ={
+        remoteDb ? ReverseRequest(value)
     }
 }
