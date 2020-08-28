@@ -12,3 +12,5 @@ libraryDependencies += "com.typesafe.akka" %% "akka-remote" % "2.6.8"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2"
 
+libraryDependencies += "com.syncthemall" % "boilerpipe" % "1.2.2"
+
