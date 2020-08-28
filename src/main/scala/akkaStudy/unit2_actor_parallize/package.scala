@@ -21,4 +21,5 @@ package object unit2_actor_parallize {
     * @author chenwu on 2020.8.27
     */
   def askMessage(actor: ActorRef, message: String)(implicit timeout: Timeout = Timeout(5 seconds)): Future[String] = (actor ? message).mapTo[String]
+
 }
