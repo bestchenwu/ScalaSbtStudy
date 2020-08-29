@@ -14,3 +14,5 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2"
 
 libraryDependencies += "com.syncthemall" % "boilerpipe" % "1.2.2"
 
+addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.3")
+
