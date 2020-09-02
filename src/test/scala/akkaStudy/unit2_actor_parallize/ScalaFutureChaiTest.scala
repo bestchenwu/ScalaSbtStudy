@@ -2,7 +2,6 @@ package akkaStudy.unit2_actor_parallize
 
 import akka.actor.ActorSystem
 import org.scalatest.matchers.must.Matchers
-import akkaStudy.unit2_actor_parallize._
 import org.scalatest.funspec.AnyFunSpecLike
 import scala.concurrent.duration._
 

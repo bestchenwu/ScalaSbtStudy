@@ -12,7 +12,7 @@ object RecieverServer extends App {
   //默认加载application.conf
   val system = ActorSystem.create("akkademy",ConfigFactory.load("server"))
   //val system = ActorSystem.create("akkademy")
-  val props = Props(classOf[RecieverActor])
+  val props = Props(classOf[CacheActor])
   val actorRef: ActorRef = system.actorOf(props, "akkademy-db")
 
 }

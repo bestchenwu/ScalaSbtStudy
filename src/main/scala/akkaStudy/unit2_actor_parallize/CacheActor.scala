@@ -4,7 +4,7 @@ import akkaStudy.unit1_firstOneDemo._
 import akka.actor.Actor
 import akka.actor.Status._
 
-class RecieverActor extends Actor {
+class CacheActor extends Actor {
 
   private val map = scala.collection.mutable.Map[String, Object]()
 
