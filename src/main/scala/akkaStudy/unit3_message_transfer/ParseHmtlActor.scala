@@ -18,6 +18,7 @@ class ParseHmtlActor extends Actor {
       val htmlDoc = HTMLFetcher.fetch(new URL(url))
       val doc = new BoilerpipeSAXInput(htmlDoc.toInputSource).getTextDocument
       val content = ArticleExtractor.INSTANCE.getText(doc);
+      val title = doc.getTitle
       sender() ! ArticleBody(url, content)
     }
     case x => sender() ! Failure(new IllegalArgumentException(s"can't recongize x class:" + x.getClass))

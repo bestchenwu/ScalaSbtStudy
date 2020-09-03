@@ -3,7 +3,7 @@ package akkaStudy.unit3_message_transfer
 import akka.actor.Actor
 import akka.actor.Status.Failure
 import akka.util.Timeout
-import akkaStudy.unit1_firstOneDemo.{GetRequest, KeyNotFoundException}
+import akkaStudy.unit1_firstOneDemo.{GetRequest, KeyNotFoundException, SetRequest}
 import akka.pattern._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -19,10 +19,10 @@ import scala.concurrent.Future
   * @param timeout
   * @author chenwu on 2020.9.2
   */
-class AskArticleActor(val cacheActorPath: String, val httpClientActorPath: String, val parseHtmlActorPath: String) extends Actor {
+class AskArticleActor(val cacheActorPath: String, val parseHtmlActorPath: String) extends Actor {
 
   val cacheActor = context.actorSelection(cacheActorPath)
-  val httpClientActor = context.actorSelection(httpClientActorPath)
+  //val httpClientActor = context.actorSelection(httpClientActorPath)
   val parseHtmlActor = context.actorSelection(parseHtmlActorPath)
 
   override def receive: Receive = {
@@ -38,11 +38,12 @@ class AskArticleActor(val cacheActorPath: String, val httpClientActorPath: Strin
       }
       result.onComplete {
         case scala.util.Success(value:String) => {
-          println(s"find $value from cache $url")
+          println(s"find $url from cache ")
           senderRef ! value
         }
         case scala.util.Success(ArticleBody(url, body)) => {
-          println(s"find $body from parse $url")
+          println(s"find $url from parse ")
+          cacheActor ! SetRequest(url,body)
           senderRef ! body
         }
         case util.Failure(exception) => senderRef ! Failure(exception)
