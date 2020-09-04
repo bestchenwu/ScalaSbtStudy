@@ -1,0 +1,5 @@
+本章主要介绍Actor的生命周期
+
+路径为/ 是根Actor
+/user 是守护Actor
+用户通过actorSystem.actorOf函数创建的所有actor都是user actor的子actor
