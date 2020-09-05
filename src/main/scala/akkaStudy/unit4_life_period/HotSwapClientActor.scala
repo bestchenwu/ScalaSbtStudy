@@ -20,9 +20,7 @@ class HotSwapClientActor(val address: String) extends Actor with Stash {
 
   private val remoteDB = context.system.actorSelection(address)
   val log = Logging(context.system, this)
-
-
-
+  var count = 0
 
   /**
     * https://blog.csdn.net/sunquan291/article/details/78894786
@@ -32,40 +30,29 @@ class HotSwapClientActor(val address: String) extends Actor with Stash {
     */
   override def supervisorStrategy: SupervisorStrategy = {
     AllForOneStrategy(2, 3 second) {
-      case _:Exception => SupervisorStrategy.restart
+      case _: Exception => SupervisorStrategy.restart
     }
   }
 
 
   override def preStart(): Unit = {
-      val timer = new Timer()
-      timer.schedule(new TimerTask {
+    val timer = new Timer()
+    //TODO:心跳检测有没有别的方式?感觉模拟发消息的方式比较low
+    timer.schedule(new TimerTask {
 
-        var count = 0;
-
-        override def run(): Unit = {
-          val identity = Identify(1)
-          val future = remoteDB ? identity
-          val result = Await.result(future.mapTo[ActorIdentity],10 seconds)
-          val actorRef = result.getActorRef
-          val correlationId = result.correlationId
-          if(actorRef == null || correlationId!=1){
-            count+=1;
-          }
-          if(count>=2){
-            throw new IllegalArgumentException("db server failure count is more than 2")
-          }
-        }
-      },200,10000);
+      override def run(): Unit = {
+        self ! "heartbeat"
+      }
+    }, 200, 1000);
   }
 
   override def preRestart(reason: Throwable, message: Option[Any]): Unit = {
-      log.info("HotSwapClientActor pre restart because of :"+reason.getMessage)
+    log.info("HotSwapClientActor pre restart because of :" + reason.getMessage)
   }
 
 
   override def postRestart(reason: Throwable): Unit = {
-    log.info("HotSwapClientActor post restart because of :"+reason.getMessage)
+    log.info("HotSwapClientActor post restart because of :" + reason.getMessage)
   }
 
   override def receive: Receive = {
@@ -84,6 +71,19 @@ class HotSwapClientActor(val address: String) extends Actor with Stash {
     case Disconnected => {
       log.warning("db now is disconnected,we can't handle message")
     }
+    case "heartbeat" => {
+      log.info("to check the db server is alive")
+      val future = remoteDB ? Identify(1)
+      val result = Await.result(future.mapTo[ActorIdentity], 10 seconds)
+      val actorRef = result.getActorRef
+      val correlationId = result.correlationId
+      if (!actorRef.isPresent) {
+        count += 1
+      }
+      if (count >= 2) {
+        throw new IllegalArgumentException("db server failure count is more than 2")
+      }
+    }
     case result => log.info("I get some message:" + result)
   }
 
@@ -101,6 +101,19 @@ class HotSwapClientActor(val address: String) extends Actor with Stash {
       log.info("db is disconnected,now revert to the default behavior")
       remoteDB ! Disconnected
       context.unbecome()
+    }
+    case identify: Identify => {
+      log.info("to check the db server is alive")
+      val future = remoteDB ? identify
+      val result = Await.result(future.mapTo[ActorIdentity], 10 seconds)
+      val actorRef = result.getActorRef
+      val correlationId = result.correlationId
+      if (!actorRef.isPresent) {
+        count += 1
+      }
+      if (count >= 2) {
+        throw new IllegalArgumentException("db server failure count is more than 2")
+      }
     }
     case result => log.info("I get the result:" + result)
   }
