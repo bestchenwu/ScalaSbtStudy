@@ -5,9 +5,7 @@ import akka.actor.{Actor, ActorRef}
 
 import scala.collection.mutable.{Map => MutableMap}
 import akka.event.Logging
-import akka.io.UdpConnected.Disconnect
 
-import scala.collection.script.Start
 
 /**
   * 本地缓存数据库
@@ -21,18 +19,18 @@ class DatabaseServer extends Actor {
 
   override def receive: Receive = {
 
-    case x: Start => {
+    case Start => {
       log.info("I am start")
       val ref = sender()
       if(ref!=self){
-        sender() ! x
+        sender() ! Start
       }
       context.become(online)
 
       def online(): Receive = {
-        case x:Connected => {
+        case Connected => {
           log.info("yes,I am connected")
-          sender() ! Connected_message
+          sender() ! Connected
         }
         case list: List[_] => list foreach {
           case SetRequest(key, value, sender) => handleSetRequest(key, value, sender)
@@ -41,10 +39,10 @@ class DatabaseServer extends Actor {
         }
         case SetRequest(key, value,sender) => handleSetRequest(key, value, sender)
         case GetRequest(key, sender) => handleGetRequest(key, sender)
-        case x: DisConnected => {
+        case Disconnected => {
           log.warning("get disconnected message,now swap to disconnected")
           context.unbecome()
-          sender() ! DisConnected_message
+          sender() ! Disconnected
         }
         case other => sender() ! Failure(new IllegalArgumentException("unkown message:"+other))
       }
@@ -76,6 +74,10 @@ class DatabaseServer extends Actor {
 
   override def preStart(): Unit = {
     log.info("prestart ,now send self start message")
-    self ! start_message
+    self ! Start
+  }
+
+  override def postStop(): Unit = {
+    log.info("I get stop message")
   }
 }

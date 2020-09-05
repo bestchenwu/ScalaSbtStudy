@@ -1,57 +1,77 @@
 package akkaStudy.unit4_life_period
 
 import akka.actor.FSM
-import akkaStudy.unit4_life_period
-import akkaStudy.unit4_life_period.StateContainerTypes.RequestQueue
-import akkaStudy.unit4_life_period._
+import akkaStudy.unit4_life_period.StateRequestQueue.MessageRequestQueue
+import akka.event.Logging
 
-sealed trait State
-case object Disconnected extends State
-case object Connected extends State
-case object ConnectedAndPending extends State
-
-case object Flush
-case object ConnectedMsg
-
-object StateContainerTypes {
-  type RequestQueue = List[Request]
+object StateRequestQueue {
+  type MessageRequestQueue = List[Request]
 }
 
+
 /**
-  * 有限状态机
+  * 有限状态机(可以实现消息批量发送)
   *
   * @param address
+  * @author chenwu on 2020.9.5
   */
-class FSMClientActor(address: String) extends FSM[State, RequestQueue]{
-  private val remoteDb = context.system.actorSelection(address)
+class FSMClientActor(val address: String) extends FSM[State, MessageRequestQueue] {
 
-  startWith(Disconnected, List.empty[Request])
+  val remoteDB = context.system.actorSelection(address)
+  //val log = Logging(context.system,this)
+  startWith(Disconnected, List[Request]())
 
-  when(Disconnected){
-    case Event(_: Connected, container: RequestQueue) => //If we get back a ping from db, change state
-      if (container.headOption.isEmpty)
+
+  when(Disconnected) {
+
+    case Event(Connected, container: MessageRequestQueue) => {
+      log.info("I am Disconnected,FSMClientActor get Connected message")
+      if (container.isEmpty) {
+        log.info("I am Disconnected,container is empty,I will go to Connected")
         goto(Connected)
-      else
+      } else {
+        log.info("I am Disconnected,container is not empty,I will go to ConnectedAndPending")
         goto(ConnectedAndPending)
-    case Event(x: Request, container: RequestQueue) =>
-      remoteDb ! Connected_message //Ping remote db to see if we're connected if not yet marked online.
-      stay using (container :+ x) //Stash the msg
-    case x =>
-      println("uhh didn't quite get that: " + x)
+      }
+    }
+    case Event(x: Request, container: MessageRequestQueue) => {
+      log.info(s"FSMClientActor get request:{$x}")
+      remoteDB ! Connected
+      stay using (container :+ x)
+    }
+    case other => {
+      log.info("uhh I get something but not useful" + other)
       stay()
+    }
   }
 
-  when (Connected) {
-    case Event(x: Request, container: RequestQueue) =>
-      goto(ConnectedAndPending) using(container :+ x)
+  when(Connected) {
+
+    case Event(x: Request, container: MessageRequestQueue) => {
+      log.info(s"I am Connected , now get new message:$x,then will go to $ConnectedAndPending")
+      goto(ConnectedAndPending) using (container :+ x)
+    }
+    case other => {
+      log.info(s"I am connected,I get result:$other")
+      stay()
+    }
   }
 
-  when (ConnectedAndPending) {
-    case Event(Flush, container) =>
-      remoteDb ! container;
-      goto(Connected) using Nil
-    case Event(x: Request, container: RequestQueue) =>
-      stay using(container :+ x)
+  when(ConnectedAndPending) {
+    case Event(Flush, container: MessageRequestQueue) => {
+      log.info("I am ConnectedAndPending , and I get flush command")
+      remoteDB ! container
+      goto(Connected) using (Nil)
+    }
+
+    case Event(x: Request, container: MessageRequestQueue) => {
+      log.info(s"I am ConnectedAndPending,and add message {$x}")
+      stay using (container :+ x)
+    }
+    case other => {
+      log.info(s"I am ConnectedAndPending,I get result:$other")
+      stay()
+    }
   }
 
   initialize()
