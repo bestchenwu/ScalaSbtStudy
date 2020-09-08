@@ -12,6 +12,7 @@ object DemoClient {
   def main(args: Array[String]): Unit = {
     //启动集群客户端
     TransformationFrontendMain.main(Array("2551"))
+    TransformationFrontendMain.main(Array("2552"))
     //启动服务端
     TransformationBackendMain.main(Array("8001"))
     TransformationBackendMain.main(Array("8002"))

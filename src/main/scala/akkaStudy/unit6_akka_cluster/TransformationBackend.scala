@@ -31,6 +31,7 @@ class TransformationBackend extends Actor {
   }
 
   def register(member: Member) = {
+    println(s"-------register:$member,role=${member.getRoles}")
     if(member.hasRole("frontend")){
       context.actorSelection(RootActorPath(member.address) / "user" / "frontend") ! BackendRegistration
     }
