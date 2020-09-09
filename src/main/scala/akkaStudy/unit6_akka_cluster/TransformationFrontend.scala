@@ -53,7 +53,10 @@ class TransformationFrontend extends Actor {
       println(s"backends size=${backends.size}")
     }
     // 移除已经终止运行的节点
-    case Terminated(a) => backends.dropWhile(_ == a)
+    case Terminated(a) => {
+      println("teminated backend="+a)
+      backends.dropWhile(_ == a)
+    }
     case other => println(s"msg:" + other)
   }
 }
