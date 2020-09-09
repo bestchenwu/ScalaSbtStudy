@@ -1,0 +1,21 @@
+<configuration>
+    <!--ERROR与其他日志分开-->
+    <appender name="ERROR" class="ch.qos.logback.core.FileAppender">
+        <file>D:\logs1\akka.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>
+                <pattern>INFO -- [%-5level] %d{HH:mm:ss} - %msg%n</pattern>
+            </pattern>
+        </encoder>
+    </appender>
+
+
+    <root level="DEBUG">
+        <appender-ref ref="ERROR" />
+    </root>
+</configuration>
